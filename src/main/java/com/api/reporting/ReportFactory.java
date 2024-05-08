@@ -18,41 +18,25 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
-import org.apache.logging.log4j.core.util.FileUtils;
 
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.MediaEntityBuilder;
-import com.aventstack.extentreports.MediaEntityModelProvider;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.Markup;
-import com.aventstack.extentreports.model.Media;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.google.common.io.Files;
 import com.jayway.jsonpath.JsonPath;
 
 import io.cucumber.java.Scenario;
 import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -78,6 +62,7 @@ public class ReportFactory {
 	private static String Environment;
 	private static String EnvironmentURL;
 	private static String ReportName;
+	private static String applicationName;
 	private static String ReportLink;
 	private static Integer totalTests;
 	private static Integer totalPassTests;
@@ -374,8 +359,9 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTests==0) {
-				messageText = "<!here>, *"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
+						+ "\n *"+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
 						+ "\n>*Total Tests : "+totalTests+"*"
@@ -387,8 +373,9 @@ public class ReportFactory {
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "<!here>, *"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
+						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
 						+ "\n>*Total Tests : "+totalTests+"*"
