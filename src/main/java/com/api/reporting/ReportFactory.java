@@ -350,6 +350,7 @@ public class ReportFactory {
 		System.out.println(EnvironmentURL);
 	}
 	public static void PublishReportOnSlack() {
+		applicationName = System.getProperty("ApplicationName");
 		for(String channel: ChannelID.split(",")) {
 			System.out.println(channel);
 			List<String> blocks = new ArrayList<String>();
