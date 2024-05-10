@@ -360,9 +360,9 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTests==0) {
-				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
-						+ "\n *"+ applicationName+"*"
+						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
 						+ "\n>*Total Tests : "+totalTests+"*"
