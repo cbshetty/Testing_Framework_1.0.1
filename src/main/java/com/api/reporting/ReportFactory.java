@@ -351,11 +351,8 @@ public class ReportFactory {
 		System.out.println(EnvironmentURL);
 	}
 	public static void PublishReportOnSlack() {
-		applicationName = "Span Calculator";
 		tagNumber = "Tag Number";
-		/*if(tagNumber.isEmpty() || tagNumber.equals("")){
-			tagNumber = "Scheduled Job";
-		}*/
+		applicationName = System.getProperty("ApplicationName");
 		for(String channel: ChannelID.split(",")) {
 			System.out.println(channel);
 			List<String> blocks = new ArrayList<String>();
@@ -365,12 +362,11 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTests==0) {
-				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Tag Number : <"+tagNumber+">*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
 						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
-						+ "\n>*Tag Number : <"+tagNumber+">*"
-						+ "\n>*Environment : "+Environment+"*"
+						+ "\n>*Environment : <"+Environment+">*"
 						+ "\n>*Total Tests : "+totalTests+"*"
 						+ "\n>*Passed : "+totalPassTests+"*"
 						+ "\n>*Failed : "+totalFailTests+"*"
@@ -380,12 +376,11 @@ public class ReportFactory {
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Tag Number : <"+tagNumber+">*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
 						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
-						+ "\n>*Tag Number : <"+tagNumber+">*"
-						+ "\n>*Environment : "+Environment+"*"
+						+ "\n>*Environment : <"+Environment+">*"
 						+ "\n>*Total Tests : "+totalTests+"*"
 						+ "\n>*Passed : "+totalPassTests+"*"
 						+ "\n>*Failed : "+totalFailTests+"*"
