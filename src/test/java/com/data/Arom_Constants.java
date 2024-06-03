@@ -10,10 +10,10 @@ import com.api.payloads.SpanCalculateMargin;
 public class Arom_Constants {
 	
 	//* * * * * * * SPAN Calculator * * * * * * *
-	public static String BaseURI = "http://span-calculator-uat.angelbroking.com"; // priority 1 if environment name and environment url are not passed in the argument
-	public static String BaseURI_UAT="http://span-calculator-uat.angelbroking.com"; // priority 1 if environment name is passed in the argument and environment base uri & default base uri is not set for api
-	public static String BaseURI_SPAN_UAT = "http://span-calculator-uat.angelbroking.com";
-	public static String BaseURI_SPAN_UAT_ONPREM = "http://span-calculator-uat.angelbroking.com:8080";
+	public static String BaseURI = "https://margin-calc-arom-prod.angelbroking.com"; // priority 1 if environment name and environment url are not passed in the argument
+	public static String BaseURI_UAT="https://margin-calc-arom-prod.angelbroking.com"; // priority 1 if environment name is passed in the argument and environment base uri & default base uri is not set for api
+	public static String BaseURI_SPAN_UAT = "https://margin-calc-arom-prod.angelbroking.com";
+	public static String BaseURI_SPAN_UAT_ONPREM = "https://margin-calc-arom-prod.angelbroking.com:8080";
 	public static String BaseURI_MPM_UAT="http://172.31.28.38:8080";
 	public static String BaseURI_MPM_ONPREM_UAT="http://172.31.28.38:8080";
 	

@@ -1,5 +1,6 @@
 package parallel;
 
+import com.dbUtils.InsertTestResultToDB;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -13,6 +14,8 @@ import com.data.Arom_Constants;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
+
+import java.sql.SQLException;
 
 @CucumberOptions(features= {"src/test/resources/parallel/"},
 glue={"com.bdd.base","parallel"},
@@ -41,13 +44,14 @@ public class ParallelTestRunner extends AbstractTestNGCucumberTests{
 	}
 
 	@AfterClass
-	public static void tearDown() {
+	public static void tearDown() throws SQLException {
 		if(ReportFactory.reporting) {
 			//ReportFactory.PrintAllTestCases();
 			ReportFactory.EndReport();
 			ReportFactory.saveCucumberReports();
 			ReportFactory.UploadReportToFileIO();
 			ReportFactory.PublishReportOnSlack();
+			InsertTestResultToDB.insertAutomationTestResults();
 		}
 	}
 	

@@ -61,14 +61,14 @@ public class ReportFactory {
 	private static String ChannelID;
 	private static String Environment;
 	private static String EnvironmentURL;
-	private static String ReportName;
-	private static String applicationName;
+	public static String ReportName;
+	public static String applicationName;
 	private static String tagNumber;
 	private static String ReportLink;
-	private static Integer totalTests;
-	private static Integer totalPassTests;
-	private static List<String> PassTests;
-	private static Integer totalFailTests;
+	public static Integer totalTests;
+	public static Integer totalPassTests;
+	public static List<String> PassTests;
+	public static Integer totalFailTests;
 	private static HashMap<String,Integer> FailTests;
 
 	private static ThreadLocal<String> testName = new ThreadLocal<String>();
@@ -351,11 +351,11 @@ public class ReportFactory {
 		System.out.println(EnvironmentURL);
 	}
 	public static void PublishReportOnSlack() {
-		applicationName = System.getProperty("ApplicationName");
-		tagNumber = System.getProperty("tagNumber");
-		if(tagNumber.isEmpty() || tagNumber.equals("")){
+		applicationName = "Span Calculator";
+		tagNumber = "Tag Number";
+		/*if(tagNumber.isEmpty() || tagNumber.equals("")){
 			tagNumber = "Scheduled Job";
-		}
+		}*/
 		for(String channel: ChannelID.split(",")) {
 			System.out.println(channel);
 			List<String> blocks = new ArrayList<String>();
