@@ -55,8 +55,13 @@ public class InsertTestResultToDB {
      * @throws SQLException if a database access error occurs.
      */
     public static void insertAutomationTestResults() throws SQLException {
-        String insertQuery = "INSERT INTO Test_Automation_Result.TestAutomationResult (`Application Name`, `Report Name`, `Total Tests`, `Total Pass Tests`, `Total Fail Tests`) VALUES (?, ?, ?, ?, ?)";
-        insertData(insertQuery, ReportFactory.applicationName, ReportFactory.ReportName, ReportFactory.totalTests, ReportFactory.totalPassTests, ReportFactory.totalFailTests);
+        System.out.println(ReportFactory.calculateExecutionTime());
+        String reportLink = System.getProperty("ReportLink");
+        String insertQuery = " INSERT INTO Test_Automation_Result.TestAutomationResult (`Application Name`, `Report Name`, `Total Tests`, `Total Pass Tests`, `Total Fail Tests`,`POD`,`Execution Time`,`Timestamp`,`Report Link`) VALUES (?, ?, ?, ?, ?,?,?,?,?)";
+        System.out.println(insertQuery);
+        System.out.println(ReportFactory.calculateExecutionTime());
+        insertData(insertQuery, ReportFactory.applicationName, ReportFactory.ReportName, ReportFactory.totalTests, ReportFactory.totalPassTests, ReportFactory.totalFailTests,"AROM",ReportFactory.calculateExecutionTime(),null,reportLink);
+        System.out.println(insertQuery);
     }
 
     /**
@@ -67,10 +72,16 @@ public class InsertTestResultToDB {
      * @throws SQLException if a database access error occurs.
      */
     public static void addColumnToTestAutomationResult(String columnName, String dataType) throws SQLException {
-        String alterTableSQL = "ALTER TABLE Test_Automation_Result.TestAutomationResult ADD " + columnName + " " + dataType;
+        String alterTableSQL = "ALTER TABLE Test_Automation_Result.TestAutomationResult ADD COLUMN `" + columnName + "` " + dataType;
+        System.out.println(alterTableSQL);
         try (Connection connection = DatabaseConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(alterTableSQL)) {
             preparedStatement.executeUpdate();
         }
+    }
+
+    public static void main(String[] args) throws SQLException {
+        //addColumnToTestAutomationResult("POD","VARCHAR(255)");
+        addColumnToTestAutomationResult("Execution Time","FLOAT");
     }
 }

@@ -12,6 +12,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,6 +71,10 @@ public class ReportFactory {
 	public static Integer totalPassTests;
 	public static List<String> PassTests;
 	public static Integer totalFailTests;
+	public static long endTime;
+
+	public static long startTime;
+	public static double totalExecutionTimeInSeconds;
 	private static HashMap<String,Integer> FailTests;
 
 	private static ThreadLocal<String> testName = new ThreadLocal<String>();
@@ -90,14 +96,12 @@ public class ReportFactory {
 	public static ThreadLocal<Integer> TotalTestSteps= new ThreadLocal<>();
 	public static ThreadLocal<Integer> StepNumber= new ThreadLocal<>();
 	public static ThreadLocal<String> errorDetails= new ThreadLocal<>();
-	
-	
-
 	public static ExtentTest tcTestNode;
 
 	public static ExtentHtmlReporter tcReporter;
 	public static ExtentReports tcReport;
 	public static ExtentTest tcTest;
+	public static String pod;
 
 
 	public static void StartReport(String reportname) {
@@ -134,6 +138,7 @@ public class ReportFactory {
 		System.setProperty("cucumber.options", "--features src/test/resources/IPO_Features --glue stepdefs");
 	}
 	public static void StartTest(String testname) {
+		startTime = System.currentTimeMillis();
 		ExtentTest test = report.createTest(testname);
 		tests.set(test);
 		testStatus.set(0);
@@ -303,8 +308,6 @@ public class ReportFactory {
 			totalPassTests++;
 			PassTests.add(testName.get());			
 		}
-
-
 	}
 
 //	public static void SetTestCaseErrorDetials(String error) {
@@ -351,9 +354,10 @@ public class ReportFactory {
 		System.out.println(EnvironmentURL);
 	}
 	public static void PublishReportOnSlack() {
+		endTime = System.currentTimeMillis();
 		applicationName = "Span Calculator";
 		tagNumber = "Tag Number";
-		applicationName = System.getProperty("ApplicationName");
+		//applicationName = System.getProperty("ApplicationName");
 		for(String channel: ChannelID.split(",")) {
 			System.out.println(channel);
 			List<String> blocks = new ArrayList<String>();
@@ -813,6 +817,20 @@ public class ReportFactory {
 				populateFileList(file.listFiles());
 			}
 		}
+	}
+
+	public static double calculateExecutionTime(){
+		long totalExecutionTime = endTime - startTime;
+		return totalExecutionTimeInSeconds = totalExecutionTime / 60000.0;
+	}
+
+	public static String getCurrentTimestamp() {
+		// Get the current date and time
+		LocalDateTime now = LocalDateTime.now();
+		// Define the format for the timestamp
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		// Format the current date and time
+		return now.format(formatter);
 	}
 	
 }
