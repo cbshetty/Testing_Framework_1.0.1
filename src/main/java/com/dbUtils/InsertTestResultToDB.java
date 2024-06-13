@@ -83,6 +83,7 @@ public class InsertTestResultToDB {
         }
     }
 
+
     public static void main(String[] args) throws SQLException {
         //addColumnToTestAutomationResult("POD","VARCHAR(255)");
         addColumnToTestAutomationResult("Execution Time","FLOAT");
