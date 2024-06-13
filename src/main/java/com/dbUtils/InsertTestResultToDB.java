@@ -57,7 +57,7 @@ public class InsertTestResultToDB {
      * @throws SQLException if a database access error occurs.
      */
     public static void insertAutomationTestResults() throws SQLException {
-        int workflowId = Integer.parseInt(System.getProperty("WorkflowId"));
+        String workflowId = System.getProperty("WorkflowId");
         System.out.println(ReportFactory.calculateExecutionTime());
        // String reportLink = System.getProperty("ReportLink");
         String insertQuery = " INSERT INTO Test_Automation_Result.TestAutomationResult (`WorkflowId`,`Application Name`, `Report Name`, `Total Tests`, `Total Pass Tests`, `Total Fail Tests`,`POD`,`Execution Time`,`Timestamp`) VALUES (?,?,?,?,?,?,?,?,?)";
