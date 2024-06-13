@@ -7,9 +7,9 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection connection;
-    private final String dbConnectionUrl = System.getProperty("CONNECTION_URL");
-    private final String dbUserName = System.getProperty("DB_USERNAME");
-    private final String dbPassword = System.getProperty("DB_PASSWORD");
+    private final String dbConnectionUrl = "jdbc:mysql://amx-test-automation-db.cluster-c0iswfmnnzar.ap-south-1.rds.amazonaws.com";
+    private final String dbUserName = "admin";
+    private final String dbPassword = "WMjrBpHnqe4Jjz733MD5";
 
     /**
      * Private constructor to load the JDBC driver and establish the database connection.
