@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class InsertTestResultToDB {
     DatabaseConnection databaseConnection;
@@ -55,12 +57,13 @@ public class InsertTestResultToDB {
      * @throws SQLException if a database access error occurs.
      */
     public static void insertAutomationTestResults() throws SQLException {
+        int workflowId = Integer.parseInt(System.getProperty("WorkflowId"));
         System.out.println(ReportFactory.calculateExecutionTime());
-        String reportLink = System.getProperty("ReportLink");
-        String insertQuery = " INSERT INTO Test_Automation_Result.TestAutomationResult (`Application Name`, `Report Name`, `Total Tests`, `Total Pass Tests`, `Total Fail Tests`,`POD`,`Execution Time`,`Timestamp`,`Report Link`) VALUES (?, ?, ?, ?, ?,?,?,?,?)";
+       // String reportLink = System.getProperty("ReportLink");
+        String insertQuery = " INSERT INTO Test_Automation_Result.TestAutomationResult (`WorkflowId`,`Application Name`, `Report Name`, `Total Tests`, `Total Pass Tests`, `Total Fail Tests`,`POD`,`Execution Time`,`Timestamp`) VALUES (?,?,?,?,?,?,?,?,?)";
         System.out.println(insertQuery);
         System.out.println(ReportFactory.calculateExecutionTime());
-        insertData(insertQuery, ReportFactory.applicationName, ReportFactory.ReportName, ReportFactory.totalTests, ReportFactory.totalPassTests, ReportFactory.totalFailTests,"AROM",ReportFactory.calculateExecutionTime(),null,reportLink);
+        insertData(insertQuery, workflowId,ReportFactory.applicationName, ReportFactory.ReportName, ReportFactory.totalTests, ReportFactory.totalPassTests, ReportFactory.totalFailTests,"AROM",ReportFactory.calculateExecutionTime(),CurrentTimestamp());
         System.out.println(insertQuery);
     }
 
@@ -84,4 +87,16 @@ public class InsertTestResultToDB {
         //addColumnToTestAutomationResult("POD","VARCHAR(255)");
         addColumnToTestAutomationResult("Execution Time","FLOAT");
     }
+
+        public static String CurrentTimestamp() {
+            // Get the current date and time
+            Date now = new Date();
+
+            // Define the format
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            // Format the current date and time
+            return formatter.format(now);
+        }
+
 }
