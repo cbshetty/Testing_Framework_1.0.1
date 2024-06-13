@@ -351,8 +351,9 @@ public class ReportFactory {
 		System.out.println(EnvironmentURL);
 	}
 	public static void PublishReportOnSlack() {
+		applicationName = "Span Calculator";
 		tagNumber = "Tag Number";
-		applicationName = System.getProperty("ApplicationName");
+		//applicationName = System.getProperty("ApplicationName");
 		for(String channel: ChannelID.split(",")) {
 			System.out.println(channel);
 			List<String> blocks = new ArrayList<String>();
