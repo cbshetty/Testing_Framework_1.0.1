@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection connection;
-    private final String dbConnectionUrl = "jdbc:mysql://amx-test-automation-db.cluster-c0iswfmnnzar.ap-south-1.rds.amazonaws.com";
+    private final String dbConnectionUrl = "jdbc:mysql://amx-test-automation-prod-db-cluster.cluster-c0iswfmnnzar.ap-south-1.rds.amazonaws.com";
     private final String dbUserName = "admin";
     private final String dbPassword = "WMjrBpHnqe4Jjz733MD5";
 
