@@ -668,6 +668,22 @@ public class API_BaseClass_V2 {
 		if(apiRequestHasBody) {
 			strhtml = "<a><details><summary>REQUEST BODY(click to view)</summary><font color=black>"+apiRequestBodyString+"</font></details></a>";
 			ReportFactory.testInfo(strhtml);}
+		String curl = createCurl(reqDetails.get(4).toString(),apiurl,apiRequestHeaders,apiRequestBodyString);
+		strhtml = "<a><details><summary>CURL(click to view)</summary><font color=black>"+curl+"</font></details></a>";
+		ReportFactory.testInfo(strhtml);
+
+	}
+	private String createCurl(String method, String url, Headers headers, String body) {
+		StringBuilder curl = new StringBuilder(String.format("%ncurl --location --request %s %s \\\n", method, url));
+
+		if (headers.size() > 1) {
+			headers.asList().forEach(h -> curl.append(String.format("--header '%s'\\\n",
+					h.toString().replaceFirst("=", ":"))));
+		}
+		if (body != null && !body.isEmpty() && !body.equals("null")) {
+			curl.append(String.format("--data-raw '%s'", body));
+		}
+		return curl.toString();
 	}
 	private void print_API_Request_Response_Details() {	
 		apiResponseString = getAPIResponse();
