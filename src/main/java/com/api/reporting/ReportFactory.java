@@ -462,7 +462,7 @@ public class ReportFactory {
 		if(System.getProperty("testStatus")==null) {
 			PublishReportOnSlackThread3();
 		}else {
-			PublishReportOnSlack4();
+			PublishReportOnSlackThread3();
 		}
 	}
 	
