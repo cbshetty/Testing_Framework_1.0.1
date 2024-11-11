@@ -457,14 +457,6 @@ public class ReportFactory {
 			PublishReportOnSlack4();
 		}	
 	}
-
-	public static void PublishReportOnSlackThread2(){
-		if(System.getProperty("testStatus")==null) {
-			PublishReportOnSlackThread3();
-		}else {
-			PublishReportOnSlackThread3();
-		}
-	}
 	
 	public static void PublishReportOnSlack3(){
 		//<${{ needs.presigned-url.outputs.s3_url }}|Entent Report Link>
@@ -496,8 +488,8 @@ public class ReportFactory {
 			for(int i=0;i<rowCount;i++) {
 				String mssg = blocksXl.getParam(0, i);
 				mssg=mssg.replace("_See Next Bot Message_", "<"+reportLink+"|Entent Report Link>");
-				postMessageInThread(channel,slackThreadId,mssg);
-				//slack.postFormattedMessageWithThread(mssg);
+				//postMessageInThread(channel,slackThreadId,mssg);
+				slack.postFormattedMessageWithThread(mssg);
 			}
 		}
 	}
@@ -506,6 +498,7 @@ public class ReportFactory {
 		String testStatus = System.getProperty("testStatus");
 		String reportLink = System.getProperty("ReportLink");
 		String channelId = System.getProperty("channelID");
+		String isDeploy = System.getProperty("isDeploy");
 		for(String channel: channelId.split(",")) {	
 			SlackUtil slack = new SlackUtil(channel);
 			if(testStatus!=null) {
@@ -518,7 +511,13 @@ public class ReportFactory {
 					}
 					
 					mssg=newMssg.replace("_See Next Bot Message_", "<"+reportLink+"|Entent Report Link>");
-					slack.postFormattedMessageWithThread(mssg);
+					if (isDeploy.equals("true")) {
+						String slackThreadId = System.getProperty("slackThread");
+						postMessageInThread(channel,slackThreadId,mssg);
+					}
+					else{
+						slack.postFormattedMessageWithThread(mssg);
+					}
 				}
 			}
 		}
