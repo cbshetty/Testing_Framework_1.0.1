@@ -143,6 +143,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.33</version>
 		</dependency>
+		<dependency>
+			<groupId>com.slack.api</groupId>
+			<artifactId>slack-api-client</artifactId>
+			<version>1.27.2</version> <!-- Use the latest version -->
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>

@@ -349,7 +349,12 @@ public class API_StepDefs {
 	public void report_is_published_on_slack() {
 		ReportFactory.PublishReportOnSlack2();
 	}
-	
+
+	@Given("Report is published on slack thread")
+	public void report_is_published_on_slack_thread() {
+		ReportFactory.PublishReportOnSlackThread2();
+	}
+
 	@Given("Start Scenario {string}")
 	public void start_Scenario(String Scenario) {
 	    Parallel_BaseClass.SetScenarioStatus(Scenario, "STARTED");
@@ -368,7 +373,7 @@ public class API_StepDefs {
 	@Given("Wait until status of scenario {string} is {string}")
 	public void wait_until_status_of_scenario_is(String Scenario, String Status) throws InterruptedException {
 		int StatusMatched=0;
-	    for(int i=0;i<300;i++) {
+	    for(int i=0;i<3;i++) {
 	    	if(Parallel_BaseClass.GetScenarioStatus(Scenario).equals(Status)) {
 	    		StatusMatched=1;
 	    		ReportFactory.PassTest("INFO :: Status of Scenario"+Scenario+" is "+Status);

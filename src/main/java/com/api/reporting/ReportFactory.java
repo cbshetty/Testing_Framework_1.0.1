@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+
+import com.slack.api.Slack;
+import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
@@ -453,6 +457,14 @@ public class ReportFactory {
 			PublishReportOnSlack4();
 		}	
 	}
+
+	public static void PublishReportOnSlackThread2(){
+		if(System.getProperty("testStatus")==null) {
+			PublishReportOnSlackThread3();
+		}else {
+			PublishReportOnSlack4();
+		}
+	}
 	
 	public static void PublishReportOnSlack3(){
 		//<${{ needs.presigned-url.outputs.s3_url }}|Entent Report Link>
@@ -469,6 +481,25 @@ public class ReportFactory {
 				slack.postFormattedMessageWithThread(mssg);
 			}		
 		}	
+	}
+
+	public static void PublishReportOnSlackThread3(){
+		//<${{ needs.presigned-url.outputs.s3_url }}|Entent Report Link>
+		String reportLink = System.getProperty("ReportLink");
+		ExcelUtil blocksXl = new ExcelUtil("src/test/resources/Test_Status.xlsx");
+		blocksXl.setAvtiveSheet("Blocks");
+		int rowCount = blocksXl.getNumberOfDataRows()+1;
+		String channelId = System.getProperty("channelID");
+		String slackThreadId = System.getProperty("slackThread");
+		for(String channel: channelId.split(",")) {
+			SlackUtil slack = new SlackUtil(channel);
+			for(int i=0;i<rowCount;i++) {
+				String mssg = blocksXl.getParam(0, i);
+				mssg=mssg.replace("_See Next Bot Message_", "<"+reportLink+"|Entent Report Link>");
+				postMessageInThread(channel,slackThreadId,mssg);
+				//slack.postFormattedMessageWithThread(mssg);
+			}
+		}
 	}
 	
 	public static void PublishReportOnSlack4() {
@@ -832,5 +863,26 @@ public class ReportFactory {
 		// Format the current date and time
 		return now.format(formatter);
 	}
+
+	public static void postMessageInThread(String channelId, String parentTs, String message) {
+		Slack slack = Slack.getInstance();
+
+		try {
+			ChatPostMessageResponse response = slack.methods(System.getProperty("SLACK_BOT_TOKEN")).chatPostMessage(req -> req
+					.channel(channelId)
+					.text(message)
+					.threadTs(parentTs) // Specify the parent message's timestamp to post in the thread
+			);
+			if (response.isOk()) {
+				System.out.println("Message posted successfully in thread: " + response.getTs());
+			} else {
+				System.err.println("Failed to post message: " + response.getError());
+			}
+
+		} catch (IOException | SlackApiException e) {
+			System.err.println("Error occurred: " + e.getMessage());
+		}
+	}
+
 	
 }
