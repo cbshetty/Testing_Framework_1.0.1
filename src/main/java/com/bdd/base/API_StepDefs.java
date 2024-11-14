@@ -349,7 +349,7 @@ public class API_StepDefs {
 	public void report_is_published_on_slack() {
 		ReportFactory.PublishReportOnSlack2();
 	}
-	
+
 	@Given("Start Scenario {string}")
 	public void start_Scenario(String Scenario) {
 	    Parallel_BaseClass.SetScenarioStatus(Scenario, "STARTED");
