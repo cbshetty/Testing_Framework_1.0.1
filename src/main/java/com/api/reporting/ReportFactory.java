@@ -511,9 +511,12 @@ public class ReportFactory {
 					}
 					
 					mssg=newMssg.replace("_See Next Bot Message_", "<"+reportLink+"|Entent Report Link>");
-					if (isDeploy.equals("true")) {
-						String slackThreadId = System.getProperty("slackThread");
-						postMessageInThread(channel,slackThreadId,mssg);
+					//null pointer handling
+					if(isDeploy!=null) {
+						if (isDeploy.equals("true")) {
+							String slackThreadId = System.getProperty("slackThread");
+							postMessageInThread(channel, slackThreadId, mssg);
+						}
 					}
 					else{
 						slack.postFormattedMessageWithThread(mssg);
