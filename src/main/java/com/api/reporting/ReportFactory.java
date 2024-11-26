@@ -14,12 +14,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -72,9 +67,12 @@ public class ReportFactory {
 	private static String tagNumber;
 	private static String ReportLink;
 	public static Integer totalTests;
+	public static LinkedList<Integer> totalTestsCount = new LinkedList<>();
 	public static Integer totalPassTests;
+	public static LinkedList<Integer> totalPassTestsCount = new LinkedList<>();
 	public static List<String> PassTests;
 	public static Integer totalFailTests;
+	public static LinkedList<Integer> totalFailTestsCount = new LinkedList<>();
 	public static long endTime;
 
 	public static long startTime;
@@ -152,6 +150,7 @@ public class ReportFactory {
 
 		testName.set(testname);
 		totalTests++;
+		UpdateTestStatusCount("Total");
 	}
 
 	public static void AssignCategories(Collection<String> categories) {
@@ -285,6 +284,7 @@ public class ReportFactory {
 			LogFactory.LogInfo("=========Ending Test==================");
 			totalFailTests++;
 			FailTests.put(testName.get(), testStatus.get());
+			UpdateTestStatusCount("Fail");
 			throw new RuntimeException();
 		}else if(StepNumber.get()<TotalTestSteps.get()) {
 			//ReportFactory.testInfo("Overall Status: FAILED (All test steps not executed)");
@@ -295,6 +295,7 @@ public class ReportFactory {
 			LogFactory.LogInfo("=========Ending Test==================");
 			totalFailTests++;
 			FailTests.put(testName.get(), testStatus.get());
+			UpdateTestStatusCount("Fail");
 			throw new RuntimeException();
 		}else if(CurrentScenario.get().isFailed()){
 			//ReportFactory.testInfo("<pre><b>"+errorDetails+"</b></pre>");
@@ -304,13 +305,15 @@ public class ReportFactory {
 			LogFactory.LogInfo("=========Ending Test==================");
 			totalFailTests++;
 			FailTests.put(testName.get(), testStatus.get());
+			UpdateTestStatusCount("Fail");
 			throw new RuntimeException();
 		}else {
 			ReportFactory.testInfo("Overall Status: PASSED");
 			tests.remove();
 			LogFactory.LogInfo("=========Ending Test==================");
 			totalPassTests++;
-			PassTests.add(testName.get());			
+			PassTests.add(testName.get());
+			UpdateTestStatusCount("Pass");
 		}
 	}
 
@@ -370,29 +373,29 @@ public class ReportFactory {
 			String message="";
 			String messageText="";
 			String messageTextPart="";
-			if(totalFailTests==0) {
-				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+			if(totalFailTestsCount.size()==0) {
+				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
 						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
-						+ "\n>*Total Tests : "+totalTests+"*"
-						+ "\n>*Passed : "+totalPassTests+"*"
-						+ "\n>*Failed : "+totalFailTests+"*"
+						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
+						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
+						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
 						+ "\n>*Failed Tests :* _NA_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTests+"*,>*Passed : "+totalPassTests+"*,>*Failed : "+totalFailTests+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
 				message = "<!here>"
 						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
-						+ "\n>*Total Tests : "+totalTests+"*"
-						+ "\n>*Passed : "+totalPassTests+"*"
-						+ "\n>*Failed : "+totalFailTests+"*"
+						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
+						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
+						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
 						+ "\n>*Failed Tests :* _View Thread_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
@@ -883,6 +886,16 @@ public class ReportFactory {
 
 		} catch (IOException | SlackApiException e) {
 			System.err.println("Error occurred: " + e.getMessage());
+		}
+	}
+
+	public static void UpdateTestStatusCount(String status){
+		if(status.equalsIgnoreCase("Total")){
+			totalTestsCount.add(1);
+		}else if(status.equalsIgnoreCase("Fail")){
+			totalFailTestsCount.add(1);
+		}else if(status.equalsIgnoreCase("Pass")){
+			totalPassTestsCount.add(1);
 		}
 	}
 
