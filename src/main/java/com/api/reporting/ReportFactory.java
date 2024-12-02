@@ -914,18 +914,20 @@ public class ReportFactory {
 
             String baseURI = "http://localhost:8282"; // Will be changed after hosting
             String basePath = "/utils/publish_test_results.php";
-            double percentage = ((double) totalTests / totalPassTests) * 100;
+            double percentage = ((double) (totalTestsCount.size()+1) / totalPassTests) * 100;
             String reportLink = "";
             if (System.getProperty("ReportLink") != null) {
                 reportLink = System.getProperty("ReportLink");
             }
+
+			calculateExecutionTime();
 
             Results results = new Results();
             results.setProjectName(applicationName);
             results.setEnvironment(Environment);
             results.setGroupName("Regression");
             results.setDuration((int) totalExecutionTimeInSeconds);
-            results.setTotalCases(totalTests);
+            results.setTotalCases(totalTestsCount.size()+1);
             results.setPercentage((int) Math.round(percentage));
             results.setFailedCases(totalFailTests);
             results.setPassedCases(totalPassTests);
@@ -940,7 +942,6 @@ public class ReportFactory {
                     .contentType(ContentType.JSON)
                     .post();
 
-            ReportFactory.testInfo(response.asPrettyString());
             Assert.assertEquals(response.getStatusCode(), 200);
         }
     }
