@@ -20,9 +20,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
+import com.api.payloads.Results;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
+import io.restassured.http.ContentType;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
@@ -43,6 +45,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import com.api.logging.*;
 import com.api.utilities.ExcelUtil;
+import org.testng.Assert;
 
 public class ReportFactory {
 	public static boolean reporting = true;
@@ -899,5 +902,48 @@ public class ReportFactory {
 		}
 	}
 
-	
+    public void publishTestResultsToDashboard() {
+
+        String isCIRun = "false";
+
+        if (System.getProperty("isCIRun") != null) {
+            isCIRun = System.getProperty("isCIRun");
+        }
+
+        if (isCIRun.equals("true")) {
+
+            String baseURI = "http://localhost:8282"; // Will be changed after hosting
+            String basePath = "/utils/publish_test_results.php";
+            double percentage = ((double) totalTests / totalPassTests) * 100;
+            String reportLink = "";
+            if (System.getProperty("ReportLink") != null) {
+                reportLink = System.getProperty("ReportLink");
+            }
+
+            Results results = new Results();
+            results.setProjectName(applicationName);
+            results.setEnvironment(Environment);
+            results.setGroupName("Regression");
+            results.setDuration((int) totalExecutionTimeInSeconds);
+            results.setTotalCases(totalTests);
+            results.setPercentage((int) Math.round(percentage));
+            results.setFailedCases(totalFailTests);
+            results.setPassedCases(totalPassTests);
+            results.setResultLink(reportLink);
+
+
+            Response response = RestAssured
+                    .given()
+                    .baseUri(baseURI)
+                    .basePath(basePath)
+                    .body(results)
+                    .contentType(ContentType.JSON)
+                    .post();
+
+            ReportFactory.testInfo(response.asPrettyString());
+            Assert.assertEquals(response.getStatusCode(), 200);
+        }
+    }
+
+
 }
