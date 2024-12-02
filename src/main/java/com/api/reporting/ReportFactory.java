@@ -902,7 +902,7 @@ public class ReportFactory {
 		}
 	}
 
-    public void publishTestResultsToDashboard() {
+    public static void publishTestResultsToDashboard() {
 
         String isCIRun = "false";
 
