@@ -953,6 +953,7 @@ public class ReportFactory {
                     .contentType(ContentType.JSON)
                     .post();
 
+            ReportFactory.testInfo(response.asPrettyString());
             Assert.assertEquals(response.getStatusCode(), 200);
         }
     }
