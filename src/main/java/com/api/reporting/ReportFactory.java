@@ -461,6 +461,7 @@ public class ReportFactory {
 			PublishReportOnSlack3();
 		}else {
 			PublishReportOnSlack4();
+			publishTestResultsToDashboard();
 		}	
 	}
 	
