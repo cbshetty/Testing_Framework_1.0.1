@@ -377,8 +377,8 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTestsCount.size()==0) {
-				messageText = "<!here>, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
-				message = "<!here>"
+				messageText = "@arom-qa-team, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				message = "@arom-qa-team"
 						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
@@ -391,8 +391,8 @@ public class ReportFactory {
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "<!here>, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
-				message = "<!here>"
+				messageText = "@arom-qa-team, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				message = "@arom-qa-team"
 						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
 						+ "\n>*Environment : <"+Environment+">*"
@@ -1453,6 +1453,9 @@ public class ReportFactory {
 	
 	public static void PublishReportOnSlack4() {
 		String testStatus = System.getProperty("testStatus");
+		if(System.getProperty("Slack_Mentions")!=null){
+			testStatus = testStatus.replaceAll("@arom-qa-team",System.getProperty("Slack_Mentions"));
+		}
 		String reportLink = System.getProperty("ReportLink");
 		String channelId = System.getProperty("channelID");
 		String isDeploy = System.getProperty("isDeploy");
