@@ -20,18 +20,15 @@ public class Results {
     @SerializedName("duration")
     @Expose
     private Integer duration;
-    @SerializedName("percentage")
+    @SerializedName("podName")
     @Expose
-    private Integer percentage;
+    private String podName;
     @SerializedName("totalCases")
     @Expose
     private Integer totalCases;
     @SerializedName("passedCases")
     @Expose
     private Integer passedCases;
-    @SerializedName("failedCases")
-    @Expose
-    private Integer failedCases;
     @SerializedName("resultLink")
     @Expose
     private String resultLink;
@@ -68,12 +65,12 @@ public class Results {
         this.duration = duration;
     }
 
-    public Integer getPercentage() {
-        return percentage;
+    public String getPodName() {
+        return podName;
     }
 
-    public void setPercentage(Integer percentage) {
-        this.percentage = percentage;
+    public void setPodName(String podName) {
+        this.podName = podName;
     }
 
     public Integer getTotalCases() {
@@ -92,19 +89,26 @@ public class Results {
         this.passedCases = passedCases;
     }
 
-    public Integer getFailedCases() {
-        return failedCases;
-    }
-
-    public void setFailedCases(Integer failedCases) {
-        this.failedCases = failedCases;
-    }
-
     public String getResultLink() {
         return resultLink;
     }
 
     public void setResultLink(String resultLink) {
         this.resultLink = resultLink;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Results{" +
+                "projectName='" + projectName + '\'' +
+                ", environment='" + environment + '\'' +
+                ", groupName='" + groupName + '\'' +
+                ", duration=" + duration +
+                ", podName='" + podName + '\'' +
+                ", totalCases=" + totalCases +
+                ", passedCases=" + passedCases +
+                ", resultLink='" + resultLink + '\'' +
+                '}';
     }
 }

@@ -462,7 +462,7 @@ public class ReportFactory {
 		}else {
 			PublishReportOnSlack4();
 			publishTestResultsToDashboard();
-		}	
+		}
 	}
 	
 	public static void PublishReportOnSlack3(){
@@ -558,12 +558,12 @@ public class ReportFactory {
 		//
 		////	private static List<PickleStepTestStep> TestCaseSteps;
 		////	private static Scenario CurrentScenario;
-		////	public static int TotalTestSteps;	
+		////	public static int TotalTestSteps;
 		////	public static int StepNumber;
 		//	public static ExceptionHandler handler;
 		////	public static String errorDetails;
 		//	public static HashMap<String,HashMap<String, String>> TestCases;
-		//	
+		//
 		//	private static ThreadLocal<List<PickleStepTestStep>> TestCaseSteps=new ThreadLocal<>();
 		//	private static ThreadLocal<Scenario> CurrentScenario = new ThreadLocal<>();
 		//	public static ThreadLocal<Integer> TotalTestSteps= new ThreadLocal<>();
@@ -635,7 +635,7 @@ public class ReportFactory {
 		//		LogFactory.LogInfo(message);
 		//	}
 		//
-		//	public static void PassTest(String message) {	
+		//	public static void PassTest(String message) {
 		//		//tests.get().pass("<b>"+message+"</b>\n"+CaptureScreenshot());
 		//		tests.get().pass("<b>"+message+"</b>");
 		//		testPassStatus.set(testPassStatus.get()+1);
@@ -687,7 +687,7 @@ public class ReportFactory {
 		//			//ReportFactory.testInfo("Overall Status: NO TESTS EXECUTED");
 		//			tests.get().skip("Overall Status: NO TESTS EXECUTED");
 		//			tests.remove();
-		//			LogFactory.LogInfo("=========Ending Test==================");	
+		//			LogFactory.LogInfo("=========Ending Test==================");
 		//		}else if(testStatus.get()!=0) {
 		//			//ReportFactory.testInfo("Overall Status: FAILED ("+testStatus.get()+" failure(s))");
 		//			tests.get().fail("Overall Status: FAILED ("+testStatus.get()+" failure(s))");
@@ -720,7 +720,7 @@ public class ReportFactory {
 		//			tests.remove();
 		//			LogFactory.LogInfo("=========Ending Test==================");
 		//			totalPassTests++;
-		//			PassTests.add(testName.get());			
+		//			PassTests.add(testName.get());
 		//		}
 		//
 		//
@@ -747,7 +747,7 @@ public class ReportFactory {
 		//			//ReportFactory.testInfo("Overall Status: NO TESTS EXECUTED");
 		//			tests.get().skip("Overall Status: NO TESTS EXECUTED");
 		//			tests.remove();
-		//			LogFactory.LogInfo("=========Ending Test==================");	
+		//			LogFactory.LogInfo("=========Ending Test==================");
 		//		}else if(testStatus.get()!=0) {
 		//			//ReportFactory.testInfo("Overall Status: FAILED ("+testStatus.get()+" failure(s))");
 		//			tests.get().fail("Overall Status: FAILED ("+testStatus.get()+" failure(s))");
@@ -795,7 +795,7 @@ public class ReportFactory {
 		//		errorDetails.remove();
 		//		errorDetails.set(error);
 		//	}
-		//	
+		//
 		//	public static void Setup_SlackIntegration() {
 		//		String testName = "";
 		//		if(System.getProperty("testName")!=null) {
@@ -839,7 +839,7 @@ public class ReportFactory {
 		//		for(String channel: ChannelID.split(",")) {
 		//			System.out.println(channel);
 		//			List<String> blocks = new ArrayList<String>();
-		//			int cnt=0;		
+		//			int cnt=0;
 		//			SlackUtil slack = new SlackUtil(channel);
 		//			String message="";
 		//			String messageText="";
@@ -905,7 +905,7 @@ public class ReportFactory {
 		//			blocksXl.setParam(1, 0, ChannelID);
 		//			blocksXl.CopyWorkbook("src/test/resources/Test_Status.xlsx");
 		//			blocksXl.closeWorkbook();
-		//			
+		//
 		//			//save test status text to file
 		//			File file1 = new File("src/test/resources/Test_Status_Text.txt");
 		//			FileWriter myWriter = null;
@@ -930,24 +930,24 @@ public class ReportFactory {
 		//		}else {
 		//			PublishReportOnSlack4();
 		//			publishTestResultsToDashboard();
-		//		}	
+		//		}
 		//	}
-		//	
+		//
 		//	public static void PublishReportOnSlack3(){
 		//		//<${{ needs.presigned-url.outputs.s3_url }}|Extent Report Link>
 		//		String reportLink = System.getProperty("ReportLink");
 		//		ExcelUtil blocksXl = new ExcelUtil("src/test/resources/Test_Status.xlsx");
 		//		blocksXl.setAvtiveSheet("Blocks");
-		//		int rowCount = blocksXl.getNumberOfDataRows()+1; 
+		//		int rowCount = blocksXl.getNumberOfDataRows()+1;
 		//		String channelId = System.getProperty("channelID");
-		//		for(String channel: channelId.split(",")) {	
+		//		for(String channel: channelId.split(",")) {
 		//			SlackUtil slack = new SlackUtil(channel);
 		//			for(int i=0;i<rowCount;i++) {
 		//				String mssg = blocksXl.getParam(0, i);
 		//				mssg=mssg.replace("_See Next Bot Message_", "<"+reportLink+"|Extent Report Link>");
 		//				slack.postFormattedMessageWithThread(mssg);
-		//			}		
-		//		}	
+		//			}
+		//		}
 		//	}
 		//
 		//	public static void PublishReportOnSlackThread3(){
@@ -968,13 +968,13 @@ public class ReportFactory {
 		//			}
 		//		}
 		//	}
-		//	
+		//
 		//	public static void PublishReportOnSlack4() {
 		//		String testStatus = System.getProperty("testStatus");
 		//		String reportLink = System.getProperty("ReportLink");
 		//		String channelId = System.getProperty("channelID");
 		//		String isDeploy = System.getProperty("isDeploy");
-		//		for(String channel: channelId.split(",")) {	
+		//		for(String channel: channelId.split(",")) {
 		//			SlackUtil slack = new SlackUtil(channel);
 		//			if(testStatus!=null) {
 		//				List<String>blocks = Arrays.asList(testStatus.split(";"));
@@ -984,7 +984,7 @@ public class ReportFactory {
 		//					for(String s:messageLines) {
 		//						newMssg+=(s+"\n");
 		//					}
-		//					
+		//
 		//					mssg=newMssg.replace("_See Next Bot Message_", "<"+reportLink+"|Extent Report Link>");
 		//					//null pointer handling
 		//					if(isDeploy!=null) {
@@ -1091,7 +1091,7 @@ public class ReportFactory {
 		//	}
 		//
 		//	public static void PrintStepInReport(Method method, Object ...  params) {
-		//		Annotation  myAnnotation = method.getAnnotations()[0];   
+		//		Annotation  myAnnotation = method.getAnnotations()[0];
 		//		System.out.println("myAnnotation=" + myAnnotation);
 		//		String annotation = myAnnotation.toString();
 		//		String step = annotation.substring(annotation.indexOf("value=", 0)+6, annotation.indexOf(")", 0));
@@ -1118,7 +1118,7 @@ public class ReportFactory {
 		//		CurrentScenario = scenario;
 		//		Field f = scenario.getClass().getDeclaredField("delegate");
 		//		f.setAccessible(true);
-		//		io.cucumber.core.backend.TestCaseState sc = (io.cucumber.core.backend.TestCaseState) f.get(scenario);          
+		//		io.cucumber.core.backend.TestCaseState sc = (io.cucumber.core.backend.TestCaseState) f.get(scenario);
 		//		Field f1 = sc.getClass().getDeclaredField("testCase");
 		//		f1.setAccessible(true);
 		//		io.cucumber.plugin.event.TestCase testCase = (io.cucumber.plugin.event.TestCase) f1.get(sc);
@@ -1127,13 +1127,13 @@ public class ReportFactory {
 		//		TestCaseSteps = testSteps;
 		//		TotalTestSteps = testSteps.size();
 		//		StepNumber=0;
-		//	}*/	
+		//	}*/
 		//	public static void SetTestCase(Scenario scenario) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		//		CurrentScenario.remove();
 		//		CurrentScenario.set(scenario);
 		//		Field f = scenario.getClass().getDeclaredField("delegate");
 		//		f.setAccessible(true);
-		//		io.cucumber.core.backend.TestCaseState sc = (io.cucumber.core.backend.TestCaseState) f.get(scenario);          
+		//		io.cucumber.core.backend.TestCaseState sc = (io.cucumber.core.backend.TestCaseState) f.get(scenario);
 		//		Field f1 = sc.getClass().getDeclaredField("testCase");
 		//		f1.setAccessible(true);
 		//		io.cucumber.plugin.event.TestCase testCase = (io.cucumber.plugin.event.TestCase) f1.get(sc);
@@ -1145,9 +1145,9 @@ public class ReportFactory {
 		//		TotalTestSteps.set(testSteps.size());
 		//		StepNumber.remove();
 		//		StepNumber.set(0);
-		//		
+		//
 		//	}
-		//	
+		//
 		////	public static void PrintTestCase() {
 		////
 		////		String testcaseHTML = "<div style=\"background-color:#E7E9EB;font-family:'Source Sans Pro', sans-serif;\"><details><summary><b> TEST CASE (<span style=\"color:#039be5\">Click to View</span>)</summary><ol>";
@@ -1156,7 +1156,7 @@ public class ReportFactory {
 		////			System.out.println(ts.getStep().getKeyWord() + ts.getStep().getText());
 		////			testcaseHTML+="<li><span><b>"+ts.getStep().getKeyWord()+"</b> "+ts.getStep().getText()+"</span></li>";
 		////			testcaseHTML2+="<li><span><b>"+ts.getStep().getKeyWord()+"</b> "+ts.getStep().getText()+"</span></li>";
-		////		}	
+		////		}
 		////		testcaseHTML+="</ol></details></div>";
 		////		testcaseHTML2+="</ol></div>";
 		////
@@ -1177,7 +1177,7 @@ public class ReportFactory {
 		//			System.out.println(ts.getStep().getKeyWord() + ts.getStep().getText());
 		//			testcaseHTML+="<li><span><b>"+ts.getStep().getKeyWord()+"</b> "+ts.getStep().getText()+"</span></li>";
 		//			testcaseHTML2+="<li><span><b>"+ts.getStep().getKeyWord()+"</b> "+ts.getStep().getText()+"</span></li>";
-		//		}	
+		//		}
 		//		testcaseHTML+="</ol></details></div>";
 		//		testcaseHTML2+="</ol></div>";
 		//
@@ -1856,6 +1856,7 @@ public class ReportFactory {
 		}
 	}
 
+
     public static void publishTestResultsToDashboard() {
 
         String isCIRun = "false";
@@ -1864,11 +1865,16 @@ public class ReportFactory {
             isCIRun = System.getProperty("isCIRun");
         }
 
-        if (isCIRun.equals("true")) {
+		String isCron = "false";
 
-            String baseURI = "http://localhost:8282"; // Will be changed after hosting
-            String basePath = "/utils/publish_test_results.php";
-            double percentage = ((double) (totalTestsCount.size()+1) / totalPassTests) * 100;
+		if (System.getProperty("isCron") != null) {
+			isCron = System.getProperty("isCron");
+		}
+
+        if (isCIRun.equals("true") || isCron.equals("true")) {
+
+            String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
+            String basePath = "/api/publish_test_results.php";
             String reportLink = "";
             if (System.getProperty("ReportLink") != null) {
                 reportLink = System.getProperty("ReportLink");
@@ -1877,16 +1883,16 @@ public class ReportFactory {
 			calculateExecutionTime();
 
             Results results = new Results();
-            results.setProjectName(applicationName);
+            results.setProjectName(ReportName);
             results.setEnvironment(Environment);
-            results.setGroupName("Regression");
+			results.setPodName(applicationName.contains("MPM")?"margin":"nonmargin");
+            results.setGroupName("automation");
             results.setDuration((int) totalExecutionTimeInSeconds);
-            results.setTotalCases(totalTestsCount.size()+1);
-            results.setPercentage((int) Math.round(percentage));
-            results.setFailedCases(totalFailTests);
+            results.setTotalCases(totalTestsCount.size());
             results.setPassedCases(totalPassTests);
             results.setResultLink(reportLink);
 
+			System.out.println(results.toString());
 
             Response response = RestAssured
                     .given()
@@ -1895,6 +1901,8 @@ public class ReportFactory {
                     .body(results)
                     .contentType(ContentType.JSON)
                     .post();
+
+			System.out.println("Response ::" + response.getBody().asPrettyString());
 
             Assert.assertEquals(response.getStatusCode(), 200);
         }
