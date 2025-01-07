@@ -1871,8 +1871,7 @@ public class ReportFactory {
 //			isCron = System.getProperty("isCron");
 //		}
 
-		applicationName = System.getProperty("ApplicationName");
-
+		String testStatus = System.getProperty("testStatus");
 
 
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
@@ -1887,7 +1886,7 @@ public class ReportFactory {
             Results results = new Results();
             results.setProjectName(ReportName);
             results.setEnvironment(Environment);
-			results.setPodName(applicationName.contains("MPM")?"margin":"nonmargin");
+			results.setPodName(testStatus.contains("MPM")?"margin":"nonmargin");
             results.setGroupName("automation");
             results.setDuration((int) totalExecutionTimeInSeconds);
             results.setTotalCases(totalTestsCount.size());
