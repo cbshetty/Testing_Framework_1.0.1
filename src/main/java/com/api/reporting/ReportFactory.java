@@ -1859,19 +1859,21 @@ public class ReportFactory {
 
     public static void publishTestResultsToDashboard() {
 
-        String isCIRun = "false";
+//        String isCIRun = "false";
+//
+//        if (System.getProperty("isCIRun") != null) {
+//            isCIRun = System.getProperty("isCIRun");
+//        }
+//
+//		String isCron = "false";
+//
+//		if (System.getProperty("isCron") != null) {
+//			isCron = System.getProperty("isCron");
+//		}
 
-        if (System.getProperty("isCIRun") != null) {
-            isCIRun = System.getProperty("isCIRun");
-        }
+		applicationName = System.getProperty("ApplicationName");
 
-		String isCron = "false";
 
-		if (System.getProperty("isCron") != null) {
-			isCron = System.getProperty("isCron");
-		}
-
-        if (isCIRun.equals("true") || isCron.equals("true")) {
 
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
             String basePath = "/api/publish_test_results.php";
@@ -1905,7 +1907,7 @@ public class ReportFactory {
 			System.out.println("Response ::" + response.getBody().asPrettyString());
 
             Assert.assertEquals(response.getStatusCode(), 200);
-        }
+
     }
 
 
