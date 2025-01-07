@@ -1936,7 +1936,7 @@ public class ReportFactory {
                     .given()
                     .baseUri(baseURI)
                     .basePath(basePath)
-					.header("X-API-KEY","9e55a437-0270-4d8b-94a2-053e1677dd06")
+					.header("X-API-KEY",System.getProperty("DASHBOARD_APIKEY"))
                     .body(results)
                     .contentType(ContentType.JSON)
                     .post();
