@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -377,7 +379,7 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTestsCount.size()==0) {
-				messageText = "@arom-qa-team, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "@arom-qa-team, *Application Name : "+ applicationName+"*, *TimeTaken: "+ calculateExecutionTime() +"mins*, *"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "@arom-qa-team"
 						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
@@ -385,13 +387,14 @@ public class ReportFactory {
 						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
 						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
 						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
+						+ "\n>*TimeTaken : "+ calculateExecutionTime()/60 +"mins*"
 						+ "\n>*Failed Tests :* _NA_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "@arom-qa-team, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "@arom-qa-team, *"+ applicationName+"*,, *TimeTaken: "+ calculateExecutionTime() +"mins*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
 				message = "@arom-qa-team"
 						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
@@ -399,6 +402,7 @@ public class ReportFactory {
 						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
 						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
 						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
+						+ "\n>*TimeTaken : "+ calculateExecutionTime()/60 +"mins*"
 						+ "\n>*Failed Tests :* _View Thread_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
@@ -1873,7 +1877,6 @@ public class ReportFactory {
 
 		String testStatus = System.getProperty("testStatus");
 
-
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
             String basePath = "/api/publish_test_results.php";
             String reportLink = "";
@@ -1881,16 +1884,36 @@ public class ReportFactory {
                 reportLink = System.getProperty("ReportLink");
             }
 
-			calculateExecutionTime();
+		// Extract total tests
+		String totalTests = extractVariable(testStatus, "Total Tests : (\\d+)");
+		System.out.println("Total Tests: " + totalTests);
 
-            Results results = new Results();
+		// Extract passed tests
+		String passedTests = extractVariable(testStatus, "Passed : (\\d+)");
+		System.out.println("Passed: " + passedTests);
+
+		// Extract duration
+		String duration = extractVariable(testStatus, "TimeTaken : (\\d+)");
+		System.out.println("Duration: " + duration);
+
+
+		Results results = new Results();
             results.setProjectName(ReportName);
             results.setEnvironment(Environment);
 			results.setPodName(testStatus.contains("MPM")?"margin":"nonmargin");
             results.setGroupName("automation");
-            results.setDuration((int) totalExecutionTimeInSeconds);
-            results.setTotalCases(totalTestsCount.size());
-            results.setPassedCases(totalPassTests);
+
+			try{
+        	assert duration != null;
+			assert totalTests != null;
+			assert passedTests != null;
+				results.setDuration(Integer.valueOf(duration));
+				results.setTotalCases(Integer.valueOf(totalTests));
+                results.setPassedCases(Integer.valueOf(passedTests));
+			}
+			catch (Exception e){
+				System.out.println(e.getMessage());
+			}
             results.setResultLink(reportLink);
 
 			System.out.println(results.toString());
@@ -1908,6 +1931,15 @@ public class ReportFactory {
             Assert.assertEquals(response.getStatusCode(), 200);
 
     }
+
+	private static String extractVariable(String input, String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(input);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return null;
+	}
 
 
 }
