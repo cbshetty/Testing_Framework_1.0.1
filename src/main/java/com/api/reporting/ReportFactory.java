@@ -371,7 +371,9 @@ public class ReportFactory {
 	}
 	public static void PublishReportOnSlack() {
 		endTime = System.currentTimeMillis();
+		suiteEndTime = System.currentTimeMillis();
 		totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
+		System.out.println("totalSuiteExecutionTimeInSeconds : "+totalSuiteExecutionTimeInSeconds);
 		//applicationName = "Span Calculator";
 		tagNumber = "Tag Number";
 		applicationName = System.getProperty("ApplicationName");
@@ -1540,7 +1542,6 @@ public class ReportFactory {
 	}
 	 */
 	public static void EndReport() {
-		suiteEndTime = System.currentTimeMillis();
 		report.flush();
 		tcReport.flush();
 		LogFactory.LogInfo("Test Report Path:- "+reportFilePath);
