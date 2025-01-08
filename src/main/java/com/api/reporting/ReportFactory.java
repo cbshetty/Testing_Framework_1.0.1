@@ -111,7 +111,7 @@ public class ReportFactory {
 	public static String pod;
 	public static long suiteStartTime;
 	public static long suiteEndTime;
-	public static double totalSuiteExecutionTimeInSeconds;
+	public static long totalSuiteExecutionTimeInSeconds;
 
 
 	public static void StartReport(String reportname) {
@@ -1828,9 +1828,9 @@ public class ReportFactory {
 		return totalExecutionTimeInSeconds = totalExecutionTime / 60000.0;
 	}
 
-	public static double calculateSuiteExecutionTime(){
+	public static long calculateSuiteExecutionTime(){
 		long totalExecutionTime = suiteEndTime - suiteStartTime;
-		return totalSuiteExecutionTimeInSeconds = totalExecutionTime / 60000.0;
+		return totalSuiteExecutionTimeInSeconds = (totalExecutionTime / 1000);
 	}
 
 	public static String getCurrentTimestamp() {
