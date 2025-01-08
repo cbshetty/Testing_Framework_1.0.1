@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -107,9 +109,13 @@ public class ReportFactory {
 	public static ExtentReports tcReport;
 	public static ExtentTest tcTest;
 	public static String pod;
+	public static long suiteStartTime;
+	public static long suiteEndTime;
+	public static double totalSuiteExecutionTimeInSeconds;
 
 
 	public static void StartReport(String reportname) {
+		suiteStartTime = System.currentTimeMillis();
 		reportFolderName = sdt.format(new Date()).toString();
 		reportFolder = System.getProperty("user.dir")+"/Reports/"+reportFolderName;
 		File folder = new File(reportFolder);
@@ -365,6 +371,7 @@ public class ReportFactory {
 	}
 	public static void PublishReportOnSlack() {
 		endTime = System.currentTimeMillis();
+		totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
 		//applicationName = "Span Calculator";
 		tagNumber = "Tag Number";
 		applicationName = System.getProperty("ApplicationName");
@@ -377,7 +384,7 @@ public class ReportFactory {
 			String messageText="";
 			String messageTextPart="";
 			if(totalFailTestsCount.size()==0) {
-				messageText = "@arom-qa-team, *Application Name : "+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "@arom-qa-team, *Application Name : "+ applicationName+"*, *TimeTaken: "+ (int)(totalSuiteExecutionTimeInSeconds/60) +"mins*, *"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
 				message = "@arom-qa-team"
 						+ "\n *Application Name : "+ applicationName+"*"
 						+ "\n *"+ReportName+"*"
@@ -385,13 +392,14 @@ public class ReportFactory {
 						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
 						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
 						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
+						+ "\n>*TimeTaken : "+ (int)(totalSuiteExecutionTimeInSeconds/60) +"mins*"
 						+ "\n>*Failed Tests :* _NA_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
 				message="";
 				messageTextPart="";
 			}else {
-				messageText = "@arom-qa-team, *"+ applicationName+"*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+				messageText = "@arom-qa-team, *"+ applicationName+"*,*TimeTaken: "+ (int)(totalSuiteExecutionTimeInSeconds/60) +"mins*,*"+ReportName+"*,>*Environment : <"+Environment+">*,>*Total Tests : "+totalTestsCount.size()+"*,>*Passed : "+totalPassTestsCount.size()+"*,>*Failed : "+totalFailTestsCount.size()+"*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
 				message = "@arom-qa-team"
 						+"\n *"+applicationName+"*"
 						+ "\n *"+ReportName+"*"
@@ -399,6 +407,7 @@ public class ReportFactory {
 						+ "\n>*Total Tests : "+totalTestsCount.size()+"*"
 						+ "\n>*Passed : "+totalPassTestsCount.size()+"*"
 						+ "\n>*Failed : "+totalFailTestsCount.size()+"*"
+						+ "\n>*TimeTaken : "+ (int)(totalSuiteExecutionTimeInSeconds/60) +"mins*"
 						+ "\n>*Failed Tests :* _View Thread_"
 						+ "\n>*Test Report :*  _See Next Bot Message_";
 				blocks.add(cnt++, message);
@@ -1531,6 +1540,7 @@ public class ReportFactory {
 	}
 	 */
 	public static void EndReport() {
+		suiteEndTime = System.currentTimeMillis();
 		report.flush();
 		tcReport.flush();
 		LogFactory.LogInfo("Test Report Path:- "+reportFilePath);
@@ -1817,6 +1827,11 @@ public class ReportFactory {
 		return totalExecutionTimeInSeconds = totalExecutionTime / 60000.0;
 	}
 
+	public static double calculateSuiteExecutionTime(){
+		long totalExecutionTime = suiteEndTime - suiteStartTime;
+		return totalSuiteExecutionTimeInSeconds = totalExecutionTime / 60000.0;
+	}
+
 	public static String getCurrentTimestamp() {
 		// Get the current date and time
 		LocalDateTime now = LocalDateTime.now();
@@ -1873,7 +1888,6 @@ public class ReportFactory {
 
 		String testStatus = System.getProperty("testStatus");
 
-
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
             String basePath = "/api/publish_test_results.php";
             String reportLink = "";
@@ -1881,16 +1895,41 @@ public class ReportFactory {
                 reportLink = System.getProperty("ReportLink");
             }
 
-			calculateExecutionTime();
+		// Extract total tests
+		String totalTests = extractVariable(testStatus, "Total Tests : (\\d+)");
+		System.out.println("Total Tests: " + totalTests);
 
-            Results results = new Results();
-            results.setProjectName(ReportName);
-            results.setEnvironment(Environment);
+		// Extract passed tests
+		String passedTests = extractVariable(testStatus, "Passed : (\\d+)");
+		System.out.println("Passed: " + passedTests);
+
+		// Extract duration
+		String duration = extractVariable(testStatus, "TimeTaken: ([\\d\\.]+)mins");
+		double timeInMinutes = Double.parseDouble(duration);
+		double timeInSeconds = timeInMinutes * 60;
+		System.out.println("Duration: " + (int)timeInSeconds);
+
+		// Extract Report Name
+		String reportName = extractVariable(testStatus, "\\*([^*]*) Test Execution Summary\\*");
+
+
+		Results results = new Results();
+            results.setProjectName(reportName);
+            results.setEnvironment("uat");
 			results.setPodName(testStatus.contains("MPM")?"margin":"nonmargin");
             results.setGroupName("automation");
-            results.setDuration((int) totalExecutionTimeInSeconds);
-            results.setTotalCases(totalTestsCount.size());
-            results.setPassedCases(totalPassTests);
+
+			try{
+        	assert duration != null;
+			assert totalTests != null;
+			assert passedTests != null;
+				results.setDuration((int) timeInSeconds);
+				results.setTotalCases(Integer.valueOf(totalTests));
+                results.setPassedCases(Integer.valueOf(passedTests));
+			}
+			catch (Exception e){
+				System.out.println(e.getMessage());
+			}
             results.setResultLink(reportLink);
 
 			System.out.println(results.toString());
@@ -1899,6 +1938,7 @@ public class ReportFactory {
                     .given()
                     .baseUri(baseURI)
                     .basePath(basePath)
+					.header("X-API-KEY",System.getProperty("DASHBOARD_APIKEY"))
                     .body(results)
                     .contentType(ContentType.JSON)
                     .post();
@@ -1908,6 +1948,15 @@ public class ReportFactory {
             Assert.assertEquals(response.getStatusCode(), 200);
 
     }
+
+	private static String extractVariable(String input, String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(input);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return null;
+	}
 
 
 }
