@@ -115,6 +115,7 @@ public class ReportFactory {
 
 
 	public static void StartReport(String reportname) {
+		suiteStartTime = System.currentTimeMillis();
 		reportFolderName = sdt.format(new Date()).toString();
 		reportFolder = System.getProperty("user.dir")+"/Reports/"+reportFolderName;
 		File folder = new File(reportFolder);
@@ -1539,6 +1540,7 @@ public class ReportFactory {
 	}
 	 */
 	public static void EndReport() {
+		suiteEndTime = System.currentTimeMillis();
 		report.flush();
 		tcReport.flush();
 		LogFactory.LogInfo("Test Report Path:- "+reportFilePath);
