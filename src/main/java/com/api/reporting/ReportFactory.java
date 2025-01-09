@@ -1889,6 +1889,8 @@ public class ReportFactory {
 
 		String testStatus = System.getProperty("testStatus");
 
+		String isCIExecution = System.getProperty("isCIExecution");
+
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
             String basePath = "/api/publish_test_results.php";
             String reportLink = "";
@@ -1913,15 +1915,13 @@ public class ReportFactory {
 		// Extract Report Name
 		String reportName = extractVariable(testStatus, "\\*([^*]*) Test Execution Summary\\*");
 
-
 		Results results = new Results();
             results.setProjectName(reportName);
             results.setEnvironment("uat");
 			results.setPodName(testStatus.contains("MPM")?"margin":"nonmargin");
-            results.setGroupName("automation");
+            results.setGroupName(isCIExecution.equalsIgnoreCase("true")?"ci":"automation");
 
 			try{
-        	assert duration != null;
 			assert totalTests != null;
 			assert passedTests != null;
 				results.setDuration((int) timeInSeconds);
@@ -1934,6 +1934,7 @@ public class ReportFactory {
             results.setResultLink(reportLink);
 
 			System.out.println(results.toString());
+			System.out.println(System.getProperty("DASHBOARD_APIKEY"));
 
             Response response = RestAssured
                     .given()
