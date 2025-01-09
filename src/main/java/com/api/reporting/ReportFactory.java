@@ -1889,7 +1889,7 @@ public class ReportFactory {
 
 		String testStatus = System.getProperty("testStatus");
 
-		String isCIExecution = System.getProperty("isCIExecution");
+		String isCIExecution = System.getProperty("isDeploy");
 
             String baseURI = "http://sre-qa-dashboard0.gpx.uat.angelone.in:8080"; // Will be changed after hosting
             String basePath = "/api/publish_test_results.php";
