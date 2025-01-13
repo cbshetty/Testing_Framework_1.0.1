@@ -630,6 +630,7 @@ public class API_BaseClass_V2 {
 				sparkListenerImpl.statusCode="0";
 			}else {
 				apiResponse = sendRequestWithRetry(method,apiRequestEndPoint);
+
 				apiResponseString = getAPIResponse();
 				apiResponseHeaders=apiResponse.getHeaders();
 				apiResponseJsonPath = apiResponse.jsonPath();
