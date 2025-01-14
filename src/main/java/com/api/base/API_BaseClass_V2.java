@@ -6,6 +6,7 @@ import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -86,6 +87,11 @@ public class API_BaseClass_V2 {
 	private String EndPoint;
 
 	public Object PojoMapClassObject;
+
+	private static final int MAX_RETRIES = 5; // Maximum number of retry attempts
+	private static final Duration RETRY_DELAY = Duration.ofSeconds(3); // Delay between retries
+
+
 
 	public void setConstantsClassObject(Object constantsClassObject) {
 		ConstantClassObject=constantsClassObject;
@@ -623,7 +629,8 @@ public class API_BaseClass_V2 {
 				//Reset Value of status code for next requests
 				sparkListenerImpl.statusCode="0";
 			}else {
-				apiResponse = apiRequest.request(method,apiRequestEndPoint);
+				apiResponse = sendRequestWithRetry(method,apiRequestEndPoint);
+
 				apiResponseString = getAPIResponse();
 				apiResponseHeaders=apiResponse.getHeaders();
 				apiResponseJsonPath = apiResponse.jsonPath();
@@ -640,6 +647,42 @@ public class API_BaseClass_V2 {
 			throw new RuntimeException();
 		}
 	}
+
+	public Response sendRequestWithRetry(Method method, String path) {
+		int attempt = 0;
+
+		while (attempt < MAX_RETRIES) {
+			try {
+				attempt++;
+				ReportFactory.testInfo("Attempt " + attempt + " to connect to: " + path);
+
+				Response response =  apiRequest.request(method,path);
+
+				if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+					return response;
+				}
+
+			} catch (Exception e) {
+				if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
+					ReportFactory.testInfo("Connection refused. Retrying in " + (RETRY_DELAY.toMinutes()/60) + " seconds...");
+					try {
+						Thread.sleep(RETRY_DELAY.toMillis());
+					} catch (InterruptedException interruptedException) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				} else {
+					ReportFactory.testInfo("An unexpected error occurred: " + e.getMessage());
+					break;
+				}
+			}
+		}
+
+		return null;
+	}
+
+
+
 	public Headers getReponseHeaders() {
 		return apiResponseHeaders;
 	}
