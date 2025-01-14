@@ -654,7 +654,7 @@ public class API_BaseClass_V2 {
 		while (attempt < MAX_RETRIES) {
 			try {
 				attempt++;
-				System.out.println("Attempt " + attempt + " to connect to: " + path);
+				ReportFactory.testInfo("Attempt " + attempt + " to connect to: " + path);
 
 				Response response =  apiRequest.request(method,path);
 
@@ -664,7 +664,7 @@ public class API_BaseClass_V2 {
 
 			} catch (Exception e) {
 				if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
-					System.out.println("Connection refused. Retrying in " + (RETRY_DELAY.toMinutes()/60) + " seconds...");
+					ReportFactory.testInfo("Connection refused. Retrying in " + (RETRY_DELAY.toMinutes()/60) + " seconds...");
 					try {
 						Thread.sleep(RETRY_DELAY.toMillis());
 					} catch (InterruptedException interruptedException) {
@@ -672,7 +672,7 @@ public class API_BaseClass_V2 {
 						break;
 					}
 				} else {
-					System.out.println("An unexpected error occurred: " + e.getMessage());
+					ReportFactory.testInfo("An unexpected error occurred: " + e.getMessage());
 					break;
 				}
 			}
