@@ -607,13 +607,6 @@ public class API_BaseClass_V2 {
 	private void Send_API_Request() {
 		set_API_RequestBody_And_Headers();
 
-		boolean isRetryEnabled =
-				System.getProperty("isRetryEnabled") != null
-				&& Boolean.parseBoolean(System.getProperty("isRetryEnabled"));
-
-		if(isRetryEnabled){
-			Send_API_Request_WithRetry();
-		} else {
 			try {
 				if (APIType.contains("WS")) {
 					sparkTicker.SetEndPoint(apiRequestEndPoint);
@@ -647,51 +640,50 @@ public class API_BaseClass_V2 {
 				print_API_Request_Details();
 				e.printStackTrace();
 				throw new RuntimeException();
-			}
 		}
 	}
 
-	private void Send_API_Request_WithRetry() {
-
-		final int MAX_RETRIES = 5;
-		final int RETRY_DELAY = 2000;
-
-		set_API_RequestBody_And_Headers();
-
-		int attempt = 0;
-		while (attempt < MAX_RETRIES) {
-			try {
-				attempt++;
-				apiResponse = apiRequest.request(method, apiRequestEndPoint);
-				apiResponseString = getAPIResponse();
-				apiResponseHeaders = apiResponse.getHeaders();
-				apiResponseJsonPath = apiResponse.jsonPath();
-				apiStatusCode = apiResponse.statusCode();
-
-				if (!silent) {
-					print_API_Request_Response_Details();
-				}
-
-				return;
-
-			} catch (Exception e) {
-				if (attempt == MAX_RETRIES) {
-					ReportFactory.FailTest("FAILURE :: API Request was unsuccessful after " + MAX_RETRIES + " attempts.");
-					String strhtml = "<a><details><summary>Error Details(click to view)</summary><font color=black>" + e.getMessage() + "</font></details></a>";
-					ReportFactory.testInfo(strhtml);
-					print_API_Request_Details();
-					break;
-				} else {
-					System.out.println("Retrying API request... Attempt " + attempt + " of " + MAX_RETRIES);
-					try {
-						Thread.sleep(RETRY_DELAY);
-					} catch (InterruptedException ie) {
-						Thread.currentThread().interrupt();
-					}
-				}
-			}
-		}
-	}
+//	private void Send_API_Request_WithRetry() {
+//
+//		final int MAX_RETRIES = 5;
+//		final int RETRY_DELAY = 2000;
+//
+//		set_API_RequestBody_And_Headers();
+//
+//		int attempt = 0;
+//		while (attempt < MAX_RETRIES) {
+//			try {
+//				attempt++;
+//				apiResponse = apiRequest.request(method, apiRequestEndPoint);
+//				apiResponseString = getAPIResponse();
+//				apiResponseHeaders = apiResponse.getHeaders();
+//				apiResponseJsonPath = apiResponse.jsonPath();
+//				apiStatusCode = apiResponse.statusCode();
+//
+//				if (!silent) {
+//					print_API_Request_Response_Details();
+//				}
+//
+//				return;
+//
+//			} catch (Exception e) {
+//				if (attempt == MAX_RETRIES) {
+//					ReportFactory.FailTest("FAILURE :: API Request was unsuccessful after " + MAX_RETRIES + " attempts.");
+//					String strhtml = "<a><details><summary>Error Details(click to view)</summary><font color=black>" + e.getMessage() + "</font></details></a>";
+//					ReportFactory.testInfo(strhtml);
+//					print_API_Request_Details();
+//					break;
+//				} else {
+//					System.out.println("Retrying API request... Attempt " + attempt + " of " + MAX_RETRIES);
+//					try {
+//						Thread.sleep(RETRY_DELAY);
+//					} catch (InterruptedException ie) {
+//						Thread.currentThread().interrupt();
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	public Headers getReponseHeaders() {
 		return apiResponseHeaders;
