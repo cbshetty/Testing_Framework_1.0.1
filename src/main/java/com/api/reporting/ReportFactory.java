@@ -1949,7 +1949,56 @@ public class ReportFactory {
 
             Assert.assertEquals(response.getStatusCode(), 200);
 
+			// Publish to Grafana
+		publishToGrafana(
+				reportName,
+				testStatus.contains("MPM")?"AROM-Margin":"AROM-NonMargin",
+				Integer.parseInt(totalTests),
+				Integer.parseInt(passedTests),
+				Integer.parseInt(totalTests) - Integer.parseInt(passedTests),
+                (int) timeInMinutes);
+
     }
+
+	private static void publishToGrafana(String featureName, String teamName,
+										 int totalTests, int passedTests,
+										 int failedTests, int duration) {
+
+		String baseURI = "http://10.11.64.170:3000";
+		String basePath = "/test_results";
+
+		Response response = RestAssured.given()
+				.baseUri(baseURI)
+				.basePath(basePath)
+				.header("Content-Type", "application/json")
+				.body(new HashMap<String, Object>() {{
+					put("testfeaturename", featureName);
+					put("teamname", teamName);
+					put("totaltests", totalTests);
+					put("passedtests", passedTests);
+					put("failedtests", failedTests);
+					put("testduration", duration);
+				}}).post();
+
+		if (response.statusCode()==409) {
+			System.out.println("Updating the data as it already exists");
+			 response = RestAssured.given()
+					.baseUri(baseURI)
+					.basePath(basePath)
+					.header("Content-Type", "application/json")
+					.body(new HashMap<String, Object>() {{
+						put("testfeaturename", featureName);
+						put("teamname", teamName);
+						put("totaltests", totalTests);
+						put("passedtests", passedTests);
+						put("failedtests", failedTests);
+						put("testduration", duration);
+					}}).post();
+		}
+
+		System.out.println(response.statusCode());
+
+	}
 
 	private static String extractVariable(String input, String regex) {
 		Pattern pattern = Pattern.compile(regex);
