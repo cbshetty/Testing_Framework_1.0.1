@@ -107,31 +107,31 @@ public class API_BaseClass_V2 {
 		}*/
 		if(System.getProperty("Env")!=null) {
 			if(Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase())!=null) {
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase());
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase());
 			}else if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else if(Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase())!=null){
-				RestAssured.baseURI=(String) Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase());
+				this.BaseURI=(String) Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase());
 			}else {
-				RestAssured.baseURI=(String) System.getProperty("EnvURL");
+				this.BaseURI=(String) System.getProperty("EnvURL");
 			}
 		}else if(System.getProperty("EnvURL")!=null)  {
 			if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else {
-				RestAssured.baseURI=(String) System.getProperty("EnvURL");
+				this.BaseURI=(String) System.getProperty("EnvURL");
 			}
 		}else {
 			if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else {
-				RestAssured.baseURI=(String) Get_API_Constants("BaseURI");
+				this.BaseURI=(String) Get_API_Constants("BaseURI");
 			}
 		}
 
 		//reset base URL if changed
-		BaseURI = RestAssured.baseURI;
-		if(RestAssured.baseURI==null) {
+//		BaseURI = this.BaseURI;
+		if(this.BaseURI==null) {
 			ReportFactory.FailTest("FAILURE :: Base URL not set for API : "+API_Name);
 		}
 
@@ -152,7 +152,7 @@ public class API_BaseClass_V2 {
 		//Intialize API constant
 
 		//REST API
-		apiRequest = RestAssured.given();
+		apiRequest = RestAssured.given().baseUri((String) this.BaseURI);
 		apiRequestBody = new JSONObject();
 		apiRequestBodyString="";
 		apiRequestHeaders= new Headers();
@@ -184,31 +184,31 @@ public class API_BaseClass_V2 {
 		//Set Env URL if passed in the mvn command
 		if(System.getProperty("Env")!=null) {
 			if(Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase())!=null) {
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase());
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI_"+System.getProperty("Env").toUpperCase());
 			}else if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else if(Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase())!=null){
-				RestAssured.baseURI=(String) Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase());
+				this.BaseURI=(String) Get_API_Constants("BaseURI_"+System.getProperty("Env").toUpperCase());
 			}else {
-				RestAssured.baseURI=(String) System.getProperty("EnvURL");
+				this.BaseURI=(String) System.getProperty("EnvURL");
 			}
 		}else if(System.getProperty("EnvURL")!=null)  {
 			if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else {
-				RestAssured.baseURI=(String) System.getProperty("EnvURL");
+				this.BaseURI=(String) System.getProperty("EnvURL");
 			}
 		}else {
 			if(Get_API_Constants(APIName+"_BaseURI")!=null){
-				RestAssured.baseURI=(String) Get_API_Constants(APIName+"_BaseURI");
+				this.BaseURI=(String) Get_API_Constants(APIName+"_BaseURI");
 			}else {
-				RestAssured.baseURI=(String) Get_API_Constants("BaseURI");
+				this.BaseURI=(String) Get_API_Constants("BaseURI");
 			}
 		}
 
 		//reset base URL if changed
-		BaseURI = RestAssured.baseURI;
-		if(RestAssured.baseURI==null) {
+//		BaseURI = this.BaseURI;
+		if(this.BaseURI==null) {
 			ReportFactory.FailTest("FAILURE :: Base URL not set for API : "+API_Name);
 		}
 
@@ -229,7 +229,7 @@ public class API_BaseClass_V2 {
 		//Intialize API constant
 
 		//REST API
-		apiRequest = RestAssured.given();
+		apiRequest = RestAssured.given().baseUri((String) this.BaseURI);
 		apiRequestBody = new JSONObject();
 		apiRequestBodyString="";
 		apiRequestHeaders= new Headers();
@@ -774,8 +774,8 @@ public class API_BaseClass_V2 {
 	public void Send_API_POST_Request_WithEmptyBody(String path) {
 		apiRequestEndPoint=path;
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.post(RestAssured.baseURI+path);
-		apiResponse=apiRequest.post(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.post(this.BaseURI+path);
+		apiResponse=apiRequest.post(this.BaseURI+path);
 		apiStatusCode=apiResponse.getStatusCode();
 		apiResponseString=getAPIResponse();
 		if(!silent) {
@@ -786,8 +786,8 @@ public class API_BaseClass_V2 {
 		apiRequestEndPoint=path;
 		addAPIRequestHeaders(headers);
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.post(RestAssured.baseURI+path);
-		apiResponse=apiRequest.post(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.post(this.BaseURI+path);
+		apiResponse=apiRequest.post(this.BaseURI+path);
 		apiResponseStatus=getAPIResponseStatus();
 		apiStatusCode=apiResponse.getStatusCode();
 		apiResponseString=getAPIResponse();
@@ -1029,8 +1029,8 @@ public class API_BaseClass_V2 {
 		//API_Setup(BaseURI);
 		apiRequestEndPoint=path;
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.post(RestAssured.baseURI+path);
-		apiResponse=apiRequest.post(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.post(this.BaseURI+path);
+		apiResponse=apiRequest.post(this.BaseURI+path);
 		apiResponseStatus=getAPIResponseStatus();
 		apiStatusCode=apiResponse.getStatusCode();
 		apiResponseString=getAPIResponse();
@@ -1043,8 +1043,8 @@ public class API_BaseClass_V2 {
 		apiRequestEndPoint=path;
 		addAPIRequestHeaders(headers);
 		set_API_RequestBody_And_Headers();	
-		//apiResponse=RestAssured.post(RestAssured.baseURI+path);
-		apiResponse=apiRequest.post(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.post(this.BaseURI+path);
+		apiResponse=apiRequest.post(this.BaseURI+path);
 		apiResponseStatus=getAPIResponseStatus();
 		apiStatusCode=apiResponse.getStatusCode();
 		apiResponseString=getAPIResponse();
@@ -1098,8 +1098,8 @@ public class API_BaseClass_V2 {
 		//API_Setup(BaseURI);
 		apiRequestEndPoint=path;
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.put(RestAssured.baseURI+path);
-		apiResponse=apiRequest.put(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.put(this.BaseURI+path);
+		apiResponse=apiRequest.put(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -1109,8 +1109,8 @@ public class API_BaseClass_V2 {
 		apiRequestEndPoint=path;
 		addAPIRequestHeaders(headers);
 		set_API_RequestBody_And_Headers();	
-		//apiResponse=RestAssured.put(RestAssured.baseURI+path);
-		apiResponse=apiRequest.put(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.put(this.BaseURI+path);
+		apiResponse=apiRequest.put(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -1161,8 +1161,8 @@ public class API_BaseClass_V2 {
 		//API_Setup(BaseURI);
 		apiRequestEndPoint=path;
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.patch(RestAssured.baseURI+path);
-		apiResponse=apiRequest.patch(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.patch(this.BaseURI+path);
+		apiResponse=apiRequest.patch(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -1172,8 +1172,8 @@ public class API_BaseClass_V2 {
 		apiRequestEndPoint=path;
 		addAPIRequestHeaders(headers);
 		set_API_RequestBody_And_Headers();	
-		//apiResponse=RestAssured.patch(RestAssured.baseURI+path);
-		apiResponse=apiRequest.patch(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.patch(this.BaseURI+path);
+		apiResponse=apiRequest.patch(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -1224,8 +1224,8 @@ public class API_BaseClass_V2 {
 		//API_Setup(BaseURI);
 		apiRequestEndPoint=path;
 		set_API_RequestBody_And_Headers();
-		//apiResponse=RestAssured.delete(RestAssured.baseURI+path);
-		apiResponse=apiRequest.delete(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.delete(this.BaseURI+path);
+		apiResponse=apiRequest.delete(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -1235,8 +1235,8 @@ public class API_BaseClass_V2 {
 		apiRequestEndPoint=path;
 		addAPIRequestHeaders(headers);
 		set_API_RequestBody_And_Headers();	
-		//apiResponse=RestAssured.delete(RestAssured.baseURI+path);
-		apiResponse=apiRequest.delete(RestAssured.baseURI+path);
+		//apiResponse=RestAssured.delete(this.BaseURI+path);
+		apiResponse=apiRequest.delete(this.BaseURI+path);
 		if(!silent) {
 			print_API_Request_Response_Details();
 		}
@@ -2728,7 +2728,7 @@ public class API_BaseClass_V2 {
 		//https://jsonplaceholder.typicode.com/posts/1
 		//RestAssured.baseURI="https://jsonplaceholder.typicode.com";
 		String file = "C:/Users/Chandrakant.Shetty/Desktop/demo.txt";
-		RequestSpecification req = RestAssured.given();
+		RequestSpecification req = RestAssured.given().baseUri((String) this.BaseURI);
 		req.contentType("multipart/form-data");
 		req.multiPart("file", new File(file));
 		Response resp = req.post("https://file.io");
