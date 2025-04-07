@@ -1999,7 +1999,7 @@ public class ReportFactory {
     }
 
     private static boolean checkIfDataExists(String featureName, String teamName) throws SQLException {
-        String selectQuery = "SELECT COUNT(*) FROM test_results WHERE teamname = ? AND testfeaturename = ? AND entry_date = CURRENT_DATE";
+        String selectQuery = "SELECT COUNT(*) FROM test_suite_summary WHERE teamname = ? AND testfeaturename = ? AND entry_date = CURRENT_DATE";
 
         PreparedStatement preparedStatement = DatabaseManager.getInstance().getConnection().prepareStatement(selectQuery);
 
@@ -2021,8 +2021,8 @@ public class ReportFactory {
 
 
     public static void insertTestResults(String featureName, String teamName, int totalTests, int passedTests, int failedTests, int duration) throws SQLException {
-        String insertQuery = "INSERT INTO test_results (testfeaturename, teamname, totaltests, passedtests, failedtests, testduration) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO test_suite_summary (testfeaturename, teamname, totaltests, passedtests, failedtests, testduration, entry_date) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement preparedStatement = DatabaseManager.getInstance().getConnection().prepareStatement(insertQuery);
         preparedStatement.setString(1, featureName);
         preparedStatement.setString(2, teamName);
@@ -2030,6 +2030,7 @@ public class ReportFactory {
         preparedStatement.setInt(4, passedTests);
         preparedStatement.setInt(5, failedTests);
         preparedStatement.setInt(6, duration);
+        preparedStatement.setDate(7, java.sql.Date.valueOf(LocalDate.now()));
 
         int rowsInserted = preparedStatement.executeUpdate();
         System.out.println("Rows inserted: " + rowsInserted);
@@ -2037,7 +2038,7 @@ public class ReportFactory {
 
     // Method to update test results if data already exists (on conflict)
     public static void updateTestResults(String featureName, String teamName, int totalTests, int passedTests, int failedTests, int duration) throws SQLException {
-        String updateQuery = "UPDATE test_results "
+        String updateQuery = "UPDATE test_suite_summary "
                 + "SET totaltests = ?, passedtests = ?, failedtests = ?, testduration = ? "
                 + "WHERE teamname = ? AND testfeaturename = ? AND entry_date = ?";
 
@@ -2063,5 +2064,15 @@ public class ReportFactory {
         return null;
     }
 
+
+    public static void main(String[] args) {
+        publishToGrafana(
+                "Dealer Creation via file upload Test Execution Summary",
+                "AROM-QA-TEST",
+                291,
+                143, 148
+                ,
+                30);
+    }
 
 }
