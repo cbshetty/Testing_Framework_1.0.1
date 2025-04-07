@@ -1955,18 +1955,18 @@ public class ReportFactory {
         System.out.println(results.toString());
         System.out.println(System.getProperty("DASHBOARD_APIKEY"));
 
-        Response response = RestAssured
-                .given()
-                .baseUri(baseURI)
-                .basePath(basePath)
-                .header("X-API-KEY", System.getProperty("DASHBOARD_APIKEY"))
-                .body(results)
-                .contentType(ContentType.JSON)
-                .post();
-
-        System.out.println("Response ::" + response.getBody().asPrettyString());
-
-        Assert.assertEquals(response.getStatusCode(), 200);
+//        Response response = RestAssured
+//                .given()
+//                .baseUri(baseURI)
+//                .basePath(basePath)
+//                .header("X-API-KEY", System.getProperty("DASHBOARD_APIKEY"))
+//                .body(results)
+//                .contentType(ContentType.JSON)
+//                .post();
+//
+//        System.out.println("Response ::" + response.getBody().asPrettyString());
+//
+//        Assert.assertEquals(response.getStatusCode(), 200);
 
         // Publish to Grafana
         publishToGrafana(
@@ -2065,14 +2065,5 @@ public class ReportFactory {
     }
 
 
-    public static void main(String[] args) {
-        publishToGrafana(
-                "Dealer Creation via file upload Test Execution Summary",
-                "AROM-QA-TEST",
-                291,
-                143, 148
-                ,
-                30);
-    }
 
 }
