@@ -9,7 +9,7 @@ public class DatabaseManager {
 
     private String url = "jdbc:mysql://amx-test-automation-prod-db-cluster.cluster-c0iswfmnnzar.ap-south-1.rds.amazonaws.com:3306/Functional_Automation";
     private String username = "admin";
-    private String password = System.getProperty("GrafanaDBPwd");
+    private String password = "WMjrBpHnqe4Jjz733MD5";
 
     // Private constructor to prevent instantiation
     private DatabaseManager() {
