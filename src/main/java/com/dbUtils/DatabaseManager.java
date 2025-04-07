@@ -7,8 +7,8 @@ public class DatabaseManager {
     private static DatabaseManager instance;
     private Connection connection;
 
-    private String url = System.getProperty("GrafanaDBURL");
-    private String username = System.getProperty("GrafanaDBUser");
+    private String url = "jdbc:mysql://amx-test-automation-prod-db-cluster.cluster-c0iswfmnnzar.ap-south-1.rds.amazonaws.com:3306/Functional_Automation";
+    private String username = "admin";
     private String password = System.getProperty("GrafanaDBPwd");
 
     // Private constructor to prevent instantiation
