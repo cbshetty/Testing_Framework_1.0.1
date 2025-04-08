@@ -479,6 +479,48 @@ public class ReportFactory {
         }
     }
 
+    public static void PublishDataToGrafana() {
+
+        String isGitRun = "false";
+
+        if(System.getProperty("isGitRun") != null) {
+            isGitRun = System.getProperty("isGitRun");
+        }
+
+        if (isGitRun.equalsIgnoreCase("true")) {
+
+            String sql = "INSERT INTO test_case_results_summary (teamname, testfeaturename, testcaseName, status, execution_time) " +
+                    "VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), execution_time = VALUES(execution_time);";
+
+            for (String key : FailTests.keySet()) {
+
+                try {
+                    PreparedStatement pstmt = DatabaseManager.getInstance().getConnection().prepareStatement(sql);
+                    pstmt.setString(1, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin");
+                    pstmt.setString(2, ReportName);
+                    pstmt.setString(3, key);
+                    pstmt.setInt(4, 0);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (String key : PassTests) {
+                try {
+                    PreparedStatement pstmt = DatabaseManager.getInstance().getConnection().prepareStatement(sql);
+                    pstmt.setString(1, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin");
+                    pstmt.setString(2, ReportName);
+                    pstmt.setString(3, key);
+                    pstmt.setInt(4, 1);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static void PublishReportOnSlack2() {
         if (System.getProperty("testStatus") == null) {
             PublishReportOnSlack3();
