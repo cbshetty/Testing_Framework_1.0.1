@@ -2188,4 +2188,27 @@ public class ReportFactory {
         }
     }
 
+    public static List<String> returnErrorList(){
+        return messageList;
+    }
+    public static void clearErrorList(){
+        messageList.clear();
+    }
+
+    public static void publishFailedTestsOnSlack() {
+
+        String testStatus = System.getProperty("testStatus");
+        String reportLink = System.getProperty("ReportLink");
+        String channelId = System.getProperty("channelID");
+        if (testStatus != null) {
+            if (!testStatus.contains("NO ERROR")) {
+                for(String channel: channelId.split(",")) {
+                    SlackUtil slack = new SlackUtil(channel);
+                    testStatus = testStatus.replace("_See Next Bot Message_", "<" + reportLink + "|Extent Report Link>");
+                    slack.postFormattedMessageWithThread(testStatus);
+                }
+            }
+        }
+    }
+
 }
