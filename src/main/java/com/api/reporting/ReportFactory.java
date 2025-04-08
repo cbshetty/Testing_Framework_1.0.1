@@ -2113,4 +2113,28 @@ public class ReportFactory {
         ReportLink="";
     }
 
+    //Response Message Map
+    public static Map<String,List<String>> ResponseMap;
+    public static String ResponseMapTest;
+    public static String ResponseMapMessage;
+
+    public static void SetResponseMap(String test, String response) {
+        ResponseMapTest=test;
+        ResponseMapMessage=response;
+        UpdateResponseMap(ResponseMapTest,ResponseMapMessage);
+    }
+
+    public static void UpdateResponseMap(String test, String response) {
+        if(ResponseMap.keySet().contains(test)) {
+            List<String> respList = new ArrayList<String>();
+            for(String resp:ResponseMap.get(test)) {
+                respList.add(resp);
+            }
+            respList.add(response);
+            ResponseMap.put(test, respList);
+        }else {
+            ResponseMap.put(test, Arrays.asList(response));
+        }
+    }
+
 }
