@@ -2137,4 +2137,55 @@ public class ReportFactory {
         }
     }
 
+    public static void createFailedTestCaseReport() {
+//		ChannelID="C06K6S65744";
+        System.setProperty("channelID",ChannelID);
+        try{
+            SlackUtil slack = new SlackUtil(ChannelID);
+            String mentions = "";
+            String message="";
+            int cnt=0;
+            List<String> blocks = new ArrayList<String>();
+            if(totalFailTests!=0) {
+                message = "*Total Tests : " + totalTests + "*," + " *Passed : " + totalPassTests + "*," + " >*Failed : " + totalFailTests + "*," + " >*Test Report :*  _See Next Bot Message_ *,"+ " >*Failed Tests* ";
+
+                for (String key : FailTests.keySet()) {
+                    message=message+" * "+key+" - "+FailTests.get(key)+" failure(s)_";
+                }
+
+            }else{
+                message="NO ERROR";
+            }
+            String tempfileName = sdt.format(new Date()) + ".xlsx";
+            ExcelUtil.CreateWorkbook("src/test/resources/" + tempfileName);
+            ExcelUtil blocksXl = new ExcelUtil("src/test/resources/" + tempfileName);
+            blocksXl.getWorbook().createSheet("Blocks");
+            blocksXl.setAvtiveSheet("Blocks");
+            blocksXl.setParam(0, 0, message);
+            blocksXl.setParam(1, 0, ChannelID);
+            blocksXl.CopyWorkbook("src/test/resources/Test_Status.xlsx");
+            blocksXl.closeWorkbook();
+
+            //save test status text to file
+            File file1 = new File("src/test/resources/Test_Status_Text.txt");
+            FileWriter myWriter = null;
+            try {
+                myWriter = new FileWriter("src/test/resources/Test_Status_Text.txt");
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            try {
+                myWriter.write(message);
+                myWriter.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }catch (Exception e){
+            System.out.print("error"+e.getMessage());
+        }
+    }
+
 }
