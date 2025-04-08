@@ -2106,6 +2106,11 @@ public class ReportFactory {
         return null;
     }
 
-
+    public static void SetSlackDetails(String channelID, String reportName, String environmentURL) {
+        ChannelID=channelID;
+        ReportName=reportName;
+        Environment=environmentURL;
+        ReportLink="";
+    }
 
 }
