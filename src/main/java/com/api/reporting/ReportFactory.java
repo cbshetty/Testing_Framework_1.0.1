@@ -1973,9 +1973,9 @@ public class ReportFactory {
         double timeInMinutes = Double.parseDouble(duration);
         double timeInSeconds = timeInMinutes * 60;
         System.out.println("Duration: " + (int) timeInSeconds);
-
+        String regex = "^(.*?Test Execution Summary)(?=.*Test Execution Summary)|^(.*?)(?=Test Execution Summary|$)";
         // Extract Report Name
-        String reportName = extractVariable(testStatus, "\\*([^*]*) Test Execution Summary\\*");
+        String reportName = extractVariable(testStatus, regex);
 
         Results results = new Results();
         results.setProjectName(reportName);
@@ -2101,7 +2101,13 @@ public class ReportFactory {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
-            return matcher.group(1);
+            // First group captures the content before the second "Test Execution Summary"
+            if (matcher.group(1) != null) {
+                return matcher.group(1);
+            } else if (matcher.group(2) != null) {
+                // Second group captures everything before the first "Test Execution Summary"
+                return matcher.group(2);
+            }
         }
         return null;
     }
