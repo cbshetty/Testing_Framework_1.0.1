@@ -479,6 +479,48 @@ public class ReportFactory {
         }
     }
 
+    public static void PublishDataToGrafana() {
+
+        String isGitRun = "false";
+
+        if(System.getProperty("isGitRun") != null) {
+            isGitRun = System.getProperty("isGitRun");
+        }
+
+        if (isGitRun.equalsIgnoreCase("true")) {
+
+            String sql = "INSERT INTO test_case_results_summary (teamname, testfeaturename, testcaseName, status, execution_time) " +
+                    "VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), execution_time = VALUES(execution_time);";
+
+            for (String key : FailTests.keySet()) {
+
+                try {
+                    PreparedStatement pstmt = DatabaseManager.getInstance().getConnection().prepareStatement(sql);
+                    pstmt.setString(1, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin");
+                    pstmt.setString(2, ReportName);
+                    pstmt.setString(3, key);
+                    pstmt.setInt(4, 0);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (String key : PassTests) {
+                try {
+                    PreparedStatement pstmt = DatabaseManager.getInstance().getConnection().prepareStatement(sql);
+                    pstmt.setString(1, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin");
+                    pstmt.setString(2, ReportName);
+                    pstmt.setString(3, key);
+                    pstmt.setInt(4, 1);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static void PublishReportOnSlack2() {
         if (System.getProperty("testStatus") == null) {
             PublishReportOnSlack3();
@@ -1931,9 +1973,9 @@ public class ReportFactory {
         double timeInMinutes = Double.parseDouble(duration);
         double timeInSeconds = timeInMinutes * 60;
         System.out.println("Duration: " + (int) timeInSeconds);
-
+        String regex = "^(.*?Test Execution Summary)(?=.*Test Execution Summary)|^(.*?)(?=Test Execution Summary|$)";
         // Extract Report Name
-        String reportName = extractVariable(testStatus, "\\*([^*]*) Test Execution Summary\\*");
+        String reportName = extractVariable(testStatus, regex);
 
         Results results = new Results();
         results.setProjectName(reportName);
@@ -2059,11 +2101,120 @@ public class ReportFactory {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
-            return matcher.group(1);
+            // First group captures the content before the second "Test Execution Summary"
+            if (matcher.group(1) != null) {
+                return matcher.group(1);
+            } else if (matcher.group(2) != null) {
+                // Second group captures everything before the first "Test Execution Summary"
+                return matcher.group(2);
+            }
         }
         return null;
     }
 
+    public static void SetSlackDetails(String channelID, String reportName, String environmentURL) {
+        ChannelID=channelID;
+        ReportName=reportName;
+        Environment=environmentURL;
+        ReportLink="";
+    }
 
+    //Response Message Map
+    public static Map<String,List<String>> ResponseMap;
+    public static String ResponseMapTest;
+    public static String ResponseMapMessage;
+
+    public static void SetResponseMap(String test, String response) {
+        ResponseMapTest=test;
+        ResponseMapMessage=response;
+        UpdateResponseMap(ResponseMapTest,ResponseMapMessage);
+    }
+
+    public static void UpdateResponseMap(String test, String response) {
+        if(ResponseMap.keySet().contains(test)) {
+            List<String> respList = new ArrayList<String>();
+            for(String resp:ResponseMap.get(test)) {
+                respList.add(resp);
+            }
+            respList.add(response);
+            ResponseMap.put(test, respList);
+        }else {
+            ResponseMap.put(test, Arrays.asList(response));
+        }
+    }
+
+    public static void createFailedTestCaseReport() {
+//		ChannelID="C06K6S65744";
+        System.setProperty("channelID",ChannelID);
+        try{
+            SlackUtil slack = new SlackUtil(ChannelID);
+            String mentions = "";
+            String message="";
+            int cnt=0;
+            List<String> blocks = new ArrayList<String>();
+            if(totalFailTests!=0) {
+                message = "*Total Tests : " + totalTests + "*," + " *Passed : " + totalPassTests + "*," + " >*Failed : " + totalFailTests + "*," + " >*Test Report :*  _See Next Bot Message_ *,"+ " >*Failed Tests* ";
+
+                for (String key : FailTests.keySet()) {
+                    message=message+" * "+key+" - "+FailTests.get(key)+" failure(s)_";
+                }
+
+            }else{
+                message="NO ERROR";
+            }
+            String tempfileName = sdt.format(new Date()) + ".xlsx";
+            ExcelUtil.CreateWorkbook("src/test/resources/" + tempfileName);
+            ExcelUtil blocksXl = new ExcelUtil("src/test/resources/" + tempfileName);
+            blocksXl.getWorbook().createSheet("Blocks");
+            blocksXl.setAvtiveSheet("Blocks");
+            blocksXl.setParam(0, 0, message);
+            blocksXl.setParam(1, 0, ChannelID);
+            blocksXl.CopyWorkbook("src/test/resources/Test_Status.xlsx");
+            blocksXl.closeWorkbook();
+
+            //save test status text to file
+            File file1 = new File("src/test/resources/Test_Status_Text.txt");
+            FileWriter myWriter = null;
+            try {
+                myWriter = new FileWriter("src/test/resources/Test_Status_Text.txt");
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            try {
+                myWriter.write(message);
+                myWriter.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }catch (Exception e){
+            System.out.print("error"+e.getMessage());
+        }
+    }
+
+    public static List<String> returnErrorList(){
+        return messageList;
+    }
+    public static void clearErrorList(){
+        messageList.clear();
+    }
+
+    public static void publishFailedTestsOnSlack() {
+
+        String testStatus = System.getProperty("testStatus");
+        String reportLink = System.getProperty("ReportLink");
+        String channelId = System.getProperty("channelID");
+        if (testStatus != null) {
+            if (!testStatus.contains("NO ERROR")) {
+                for(String channel: channelId.split(",")) {
+                    SlackUtil slack = new SlackUtil(channel);
+                    testStatus = testStatus.replace("_See Next Bot Message_", "<" + reportLink + "|Extent Report Link>");
+                    slack.postFormattedMessageWithThread(testStatus);
+                }
+            }
+        }
+    }
 
 }
