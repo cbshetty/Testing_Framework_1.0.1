@@ -492,11 +492,18 @@ public class ReportFactory {
             String sql = "INSERT INTO test_case_results_summary (teamname, testfeaturename, testcaseName, status, execution_time) " +
                     "VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), execution_time = VALUES(execution_time);";
 
+            String teamName = applicationName.toUpperCase().equals("MPM") ? "AROM-Margin" : "AROM-NonMargin";
+            if(teamName.equals("AROM-NonMargin") && ReportName.contains("Smoke")){
+                teamName = "AROM-NonMargin-CI";
+            } else if(teamName.equals("AROM-Margin") && ReportName.contains("Smoke")){
+                teamName = "AROM-Margin-CI";
+            }
+
             for (String key : FailTests.keySet()) {
 
                 try {
                     PreparedStatement pstmt = DatabaseManager.getInstance().getConnection().prepareStatement(sql);
-                    pstmt.setString(1, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin");
+                    pstmt.setString(1, teamName);
                     pstmt.setString(2, ReportName);
                     pstmt.setString(3, key);
                     pstmt.setInt(4, 0);
@@ -2010,10 +2017,16 @@ public class ReportFactory {
 //
 //        Assert.assertEquals(response.getStatusCode(), 200);
 
+        String teamName = testStatus.contains("MPM") ? "AROM-Margin" : "AROM-NonMargin";
+        if(teamName.equals("AROM-NonMargin") && testStatus.contains("Smoke")){
+            teamName = "AROM-NonMargin-CI";
+        } else if(teamName.equals("AROM-Margin") && testStatus.contains("Smoke")){
+            teamName = "AROM-Margin-CI";
+        }
         // Publish to Grafana
         publishToGrafana(
                 reportName,
-                testStatus.contains("MPM") ? "AROM-Margin" : "AROM-NonMargin",
+                teamName,
                 Integer.parseInt(totalTests),
                 Integer.parseInt(passedTests),
                 Integer.parseInt(totalTests) - Integer.parseInt(passedTests),
