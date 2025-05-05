@@ -122,9 +122,9 @@ public class ReportFactory {
     public static long suiteStartTime;
     public static long suiteEndTime;
     public static long totalSuiteExecutionTimeInSeconds;
-    public static int jiraIssueCount;
-    public static String jiraIssueLink;
-    public static String jiraIssueList;
+    public static int jiraIssueCount=0;
+    public static String jiraIssueLink="";
+    public static String jiraIssueList="";
 
 
     public static void StartReport(String reportname) {
