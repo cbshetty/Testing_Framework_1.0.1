@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,12 +28,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
+import com.api.base.API_BaseClass;
 import com.api.payloads.Results;
 import com.dbUtils.DatabaseManager;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import net.minidev.json.JSONArray;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
@@ -117,6 +122,9 @@ public class ReportFactory {
     public static long suiteStartTime;
     public static long suiteEndTime;
     public static long totalSuiteExecutionTimeInSeconds;
+    public static int jiraIssueCount;
+    public static String jiraIssueLink;
+    public static String jiraIssueList;
 
 
     public static void StartReport(String reportname) {
@@ -388,6 +396,7 @@ public class ReportFactory {
         //applicationName = "Span Calculator";
         tagNumber = "Tag Number";
         applicationName = System.getProperty("ApplicationName");
+        String workflowRunURL = (System.getProperty("WorkflowRunURL")==null)?"http://env.WorkflowRunURL.com":System.getProperty("WorkflowRunURL");
         for (String channel : ChannelID.split(",")) {
             System.out.println(channel);
             List<String> blocks = new ArrayList<String>();
@@ -397,32 +406,34 @@ public class ReportFactory {
             String messageText = "";
             String messageTextPart = "";
             if (totalFailTestsCount.size() == 0) {
-                messageText = "@arom-qa-team, *Application Name : " + applicationName + "*, *TimeTaken: " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*, *" + ReportName + "*,>*Environment : <" + Environment + ">*,>*Total Tests : " + totalTestsCount.size() + "*,>*Passed : " + totalPassTestsCount.size() + "*,>*Failed : " + totalFailTestsCount.size() + "*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_";
+                messageText = "@arom-qa-team, *Application Name : " + applicationName + "*, *TimeTaken: " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*, *<"+workflowRunURL+"|:github: " + ReportName + ">*,>*Environment : <" + Environment + ">*,>*Total Tests : " + totalTestsCount.size() + "*,>*Passed : " + totalPassTestsCount.size() + "*,>*Failed : " + totalFailTestsCount.size() + "*,>*Failed Tests :* _NA_,>*Test Report :*  _See Next Bot Message_,>*Open Issues/Tickets :*  <"+jiraIssueLink+"|"+jiraIssueCount+">";
                 message = "@arom-qa-team"
                         + "\n *Application Name : " + applicationName + "*"
-                        + "\n *" + ReportName + "*"
+                        + "\n *<"+workflowRunURL+"|:github: " + ReportName + ">*"
                         + "\n>*Environment : <" + Environment + ">*"
                         + "\n>*Total Tests : " + totalTestsCount.size() + "*"
                         + "\n>*Passed : " + totalPassTestsCount.size() + "*"
                         + "\n>*Failed : " + totalFailTestsCount.size() + "*"
                         + "\n>*TimeTaken : " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*"
                         + "\n>*Failed Tests :* _NA_"
-                        + "\n>*Test Report :*  _See Next Bot Message_";
+                        + "\n>*Test Report :*  _See Next Bot Message_"
+                        + "\n>*Open Issues/Tickets :*  <"+jiraIssueLink+"|"+jiraIssueCount+">";
                 blocks.add(cnt++, message);
                 message = "";
                 messageTextPart = "";
             } else {
-                messageText = "@arom-qa-team, *" + applicationName + "*,*TimeTaken: " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*,*" + ReportName + "*,>*Environment : <" + Environment + ">*,>*Total Tests : " + totalTestsCount.size() + "*,>*Passed : " + totalPassTestsCount.size() + "*,>*Failed : " + totalFailTestsCount.size() + "*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_";
+                messageText = "@arom-qa-team, *" + applicationName + "*,*TimeTaken: " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*,*<"+workflowRunURL+"|:github: " + ReportName + ">*,>*Environment : <" + Environment + ">*,>*Total Tests : " + totalTestsCount.size() + "*,>*Passed : " + totalPassTestsCount.size() + "*,>*Failed : " + totalFailTestsCount.size() + "*,>*Failed Tests :* _View Thread_,>*Test Report :*  _See Next Bot Message_,>*Open Issues/Tickets :*  <"+jiraIssueLink+"|"+jiraIssueCount+">";
                 message = "@arom-qa-team"
                         + "\n *" + applicationName + "*"
-                        + "\n *" + ReportName + "*"
+                        + "\n *<"+workflowRunURL+"|:github: " + ReportName + ">*"
                         + "\n>*Environment : <" + Environment + ">*"
                         + "\n>*Total Tests : " + totalTestsCount.size() + "*"
                         + "\n>*Passed : " + totalPassTestsCount.size() + "*"
                         + "\n>*Failed : " + totalFailTestsCount.size() + "*"
                         + "\n>*TimeTaken : " + (int) (totalSuiteExecutionTimeInSeconds / 60) + "mins*"
                         + "\n>*Failed Tests :* _View Thread_"
-                        + "\n>*Test Report :*  _See Next Bot Message_";
+                        + "\n>*Test Report :*  _See Next Bot Message_"
+                        + "\n>*Open Issues/Tickets :*  <"+jiraIssueLink+"|"+jiraIssueCount+">";
                 blocks.add(cnt++, message);
                 message = "*Failed Tests*";
                 messageTextPart = ";*Failed Tests*";
@@ -1647,6 +1658,35 @@ public class ReportFactory {
         String uploadedfilepath = JsonPath.read(resp.getBody().asString(), "$.link");
         ReportLink = uploadedfilepath;
         LogFactory.LogInfo("File.io Report Link: " + uploadedfilepath);
+    }
+
+    public static void FetchOpenJiraIssues(String jql){
+        try {
+            RequestSpecification jiraRequest = RestAssured.given().relaxedHTTPSValidation();
+            jiraRequest.header(new Header("Authorization", "Basic " + System.getProperty("JiraAuthToken")));
+            jiraRequest.queryParam("jql", jql);
+            Response jiraReponse = jiraRequest.get("https://angelbrokingpl.atlassian.net//rest/api/2/search");
+            JSONArray OpenIssueList = (JSONArray) API_BaseClass.getJsonParameter(jiraReponse.getBody().asString(), "$.issues.*.key");
+            jiraIssueCount = OpenIssueList.size();
+            jiraIssueLink = "https://angelbrokingpl.atlassian.net/issues/?jql=" + URLEncoder.encode(jql, StandardCharsets.UTF_8.toString());
+            jiraIssueList = (jiraIssueCount>0)?((totalFailTestsCount.size()>0)?",*Open Issues/Tasks*":";*Open Issues/Tasks*"):"";
+            for (Object id : OpenIssueList.stream().collect(Collectors.toSet())) {
+                JSONArray description = (JSONArray) API_BaseClass.getJsonParameter(jiraReponse.getBody().asString(), "$.issues[?(@.key=='" + String.valueOf(id) + "')].fields.summary");
+                jiraIssueList += ",> <https://angelbrokingpl.atlassian.net/browse/" + String.valueOf(id)+"|"+String.valueOf(description.get(0))+">";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        //save jira links to file
+        File file1 = new File("src/test/resources/Jira_Links_Text.txt");
+        FileWriter myWriter = null;
+        try {
+            myWriter = new FileWriter("src/test/resources/Jira_Links_Text.txt");
+            myWriter.write(jiraIssueList);
+            myWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void PrintStepInReport(Method method, Object... params) {
