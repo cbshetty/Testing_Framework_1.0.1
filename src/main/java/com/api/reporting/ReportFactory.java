@@ -519,11 +519,12 @@ public class ReportFactory {
                     pstmt.setString(3, key);
                     pstmt.setInt(4, 0);
                     pstmt.executeUpdate();
-
+                    pstmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
+
 
             for (String key : PassTests) {
                 try {
