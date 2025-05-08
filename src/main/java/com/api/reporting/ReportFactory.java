@@ -519,11 +519,13 @@ public class ReportFactory {
                     pstmt.setString(3, key);
                     pstmt.setInt(4, 0);
                     pstmt.executeUpdate();
-
+                    int row=pstmt.executeUpdate();
+                    System.out.println("no of updated row : "+ row);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
+
 
             for (String key : PassTests) {
                 try {
@@ -532,7 +534,8 @@ public class ReportFactory {
                     pstmt.setString(2, ReportName);
                     pstmt.setString(3, key);
                     pstmt.setInt(4, 1);
-                    pstmt.executeUpdate();
+                    int row=pstmt.executeUpdate();
+                    System.out.println("no of updated row : "+ row);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
