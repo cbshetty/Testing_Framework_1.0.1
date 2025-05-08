@@ -26,7 +26,7 @@ public class DatabaseManager {
 
     // Get the instance of DatabaseManager (Singleton pattern)
     public static DatabaseManager getInstance() {
-        if (instance == null) {
+        if (instance == null || DatabaseManager.instance.connection == null) {
             synchronized (DatabaseManager.class) {
                 if (instance == null) {
                     instance = new DatabaseManager();

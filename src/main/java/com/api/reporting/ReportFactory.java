@@ -505,6 +505,7 @@ public class ReportFactory {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                DatabaseManager.getInstance().closeConnection();
             }
 
             for (String key : PassTests) {
