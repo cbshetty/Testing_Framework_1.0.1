@@ -501,6 +501,7 @@ public class ReportFactory {
                     pstmt.setString(3, key);
                     pstmt.setInt(4, 0);
                     pstmt.executeUpdate();
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -518,6 +519,7 @@ public class ReportFactory {
                     e.printStackTrace();
                 }
             }
+            DatabaseManager.getInstance().closeConnection();
         }
     }
 
@@ -2075,6 +2077,7 @@ public class ReportFactory {
         preparedStatement.setDate(7, java.sql.Date.valueOf(LocalDate.now()));
 
         int rowsInserted = preparedStatement.executeUpdate();
+        DatabaseManager.getInstance().closeConnection();
         System.out.println("Rows inserted: " + rowsInserted);
     }
 
@@ -2094,6 +2097,7 @@ public class ReportFactory {
         preparedStatement.setDate(7, java.sql.Date.valueOf(LocalDate.now())); // Setting current date
 
         int rowsUpdated = preparedStatement.executeUpdate();
+        DatabaseManager.getInstance().closeConnection();
         System.out.println("Rows updated: " + rowsUpdated);
     }
 
