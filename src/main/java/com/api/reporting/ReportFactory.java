@@ -1977,7 +1977,7 @@ public class ReportFactory {
         System.out.println("Duration: " + (int) timeInSeconds);
 
         // Extract Report Name
-        String reportName = extractVariable(testStatus, "\\*([^*]*) Test Execution Summary\\*") + " Test Execution Summary";
+        String reportName = extractVariable(testStatus, "<https://github\\.com/[^|]+\\|:github:\\s*(.*?)>") ;
 
         Results results = new Results();
         results.setProjectName(reportName);
