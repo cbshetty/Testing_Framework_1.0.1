@@ -537,9 +537,9 @@ public class ReportFactory {
                     e.printStackTrace();
                 }
             }
-            DatabaseManager.getInstance().closeConnection();
             totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
             publishToGrafana(ReportName, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin", totalTests, totalPassTests, totalFailTests,  (int) (totalSuiteExecutionTimeInSeconds / 60) );
+            DatabaseManager.getInstance().closeConnection();
         }
     }
 
