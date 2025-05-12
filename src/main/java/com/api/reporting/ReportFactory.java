@@ -538,6 +538,8 @@ public class ReportFactory {
                 }
             }
             DatabaseManager.getInstance().closeConnection();
+            totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
+            publishToGrafana(ReportName, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin", totalTests, totalPassTests, totalFailTests,  (int) (totalSuiteExecutionTimeInSeconds / 60) );
         }
     }
 
@@ -2066,13 +2068,13 @@ public class ReportFactory {
             teamName = "AROM-Margin-CI";
         }
         // Publish to Grafana
-        publishToGrafana(
-                reportName,
-                teamName,
-                Integer.parseInt(totalTests),
-                Integer.parseInt(passedTests),
-                Integer.parseInt(totalTests) - Integer.parseInt(passedTests),
-                (int) timeInMinutes);
+//        publishToGrafana(
+//                reportName,
+//                teamName,
+//                Integer.parseInt(totalTests),
+//                Integer.parseInt(passedTests),
+//                Integer.parseInt(totalTests) - Integer.parseInt(passedTests),
+//                (int) timeInMinutes);
 
     }
 
