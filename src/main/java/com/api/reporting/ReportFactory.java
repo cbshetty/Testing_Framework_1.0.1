@@ -504,10 +504,8 @@ public class ReportFactory {
                     "VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE status = VALUES(status), execution_time = VALUES(execution_time);";
 
             String teamName = applicationName.toUpperCase().equals("MPM") ? "AROM-Margin" : "AROM-NonMargin";
-            if(teamName.equals("AROM-NonMargin") && ReportName.contains("Smoke")){
-                teamName = "AROM-NonMargin-CI";
-            } else if(teamName.equals("AROM-Margin") && ReportName.contains("Smoke")){
-                teamName = "AROM-Margin-CI";
+            if(ReportName.contains("Smoke")){
+                teamName = "AROM-CI";
             }
 
             for (String key : FailTests.keySet()) {
@@ -537,8 +535,9 @@ public class ReportFactory {
                     e.printStackTrace();
                 }
             }
+
             totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
-            publishToGrafana(ReportName, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin", totalTests, totalPassTests, totalFailTests,  (int) (totalSuiteExecutionTimeInSeconds / 60) );
+            publishToGrafana(ReportName, teamName, totalTests, totalPassTests, totalFailTests,  (int) (totalSuiteExecutionTimeInSeconds / 60) );
             DatabaseManager.getInstance().closeConnection();
         }
     }
