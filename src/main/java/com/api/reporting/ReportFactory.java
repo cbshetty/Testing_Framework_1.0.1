@@ -537,8 +537,11 @@ public class ReportFactory {
                     e.printStackTrace();
                 }
             }
+
+            System.out.println("Total Tests : " + totalTestsCount.size());
+            System.out.println("totalTestsCount : " + totalTests);
             totalSuiteExecutionTimeInSeconds = calculateSuiteExecutionTime();
-            publishToGrafana(ReportName, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin", totalTests, totalPassTests, totalFailTests,  (int) (totalSuiteExecutionTimeInSeconds / 60) );
+            publishToGrafana(ReportName, applicationName.toUpperCase().contains("MPM") ? "AROM-Margin" : "AROM-NonMargin", (totalTestsCount.size()), totalPassTestsCount.size(), totalFailTestsCount.size(),  (int) (totalSuiteExecutionTimeInSeconds / 60) );
             DatabaseManager.getInstance().closeConnection();
         }
     }
